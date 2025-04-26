@@ -54,3 +54,12 @@ Generated dynamic TableBody using `.map()` to loop over alerts, connected click 
 
 **Result:**
 Created computed `filteredAlerts` array using `.filter()` method, connected table rendering to show only matching alerts.
+
+## 5. Preparing Video Upload to Server
+
+**Prompt:**
+
+"Help me enhance a video upload section in a React app (TypeScript, Material-UI). After selecting a video file, show a 'Send to Server' button. Clicking the button should (for now) console.log the file object to simulate preparing for backend upload."
+
+**Result:**
+Added Button that appears only after file is uploaded. Console.log the file on click.

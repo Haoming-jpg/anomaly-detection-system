@@ -120,7 +120,24 @@ const MainPage = () => {
       {/* Upload Video Section */}
       <Paper style={{ padding: 20 }}>
         <Typography variant="h5" gutterBottom>Upload Video</Typography>
-        <input type="file" accept="video/*" onChange={handleUpload} />
+        <input
+          type="file"
+          accept="video/*"
+          onChange={handleUpload}
+          style={{ display: 'block', marginBottom: 10 }}
+        />
+        {videoFile && (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              console.log('Ready to upload:', videoFile);
+              // Later: Here you will call the API to upload to backend
+            }}
+          >
+            Send to Server
+          </Button>
+        )}
       </Paper>
 
       {/* Video Player Section */}
