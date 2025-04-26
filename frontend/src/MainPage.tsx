@@ -97,10 +97,11 @@ const MainPage = () => {
         />
         <Button
           variant="contained"
-          color="secondary"
-          onClick={sendVideoToServer}
+          color="primary"
+          onClick={handleSearch}
+          style={{ marginTop: 10 }}
         >
-          Send to Server
+          Search
         </Button>
       </Paper>
 
@@ -150,10 +151,7 @@ const MainPage = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => {
-              console.log('Ready to upload:', videoFile);
-              // Later: Here you will call the API to upload to backend
-            }}
+            onClick={sendVideoToServer}
           >
             Send to Server
           </Button>
