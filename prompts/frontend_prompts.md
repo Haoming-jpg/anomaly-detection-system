@@ -45,3 +45,12 @@ Generated `AlertDetailDialog.tsx` component with DialogTitle, DialogContent, and
 
 **Result:**
 Generated dynamic TableBody using `.map()` to loop over alerts, connected click event to AlertDetailDialog.
+
+## 4. Implementing Search Filter for Alerts Table
+
+**Prompt:**
+
+"Help me implement a simple search filter for a Material-UI Table. Based on a searchQuery string, show only the rows where alert ID, type, message, or timestamp includes the search text. Use TypeScript."
+
+**Result:**
+Created computed `filteredAlerts` array using `.filter()` method, connected table rendering to show only matching alerts.

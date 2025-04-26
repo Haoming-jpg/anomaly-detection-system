@@ -51,6 +51,17 @@ const MainPage = () => {
     },
   ];
 
+  const filteredAlerts = dummyAlerts.filter((alert) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      alert.id.toString().includes(query) ||
+      alert.time.toLowerCase().includes(query) ||
+      alert.type.toLowerCase().includes(query) ||
+      alert.message.toLowerCase().includes(query)
+    );
+  });
+
+
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Search Section */}
@@ -86,7 +97,7 @@ const MainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dummyAlerts.map((alert) => (
+            {filteredAlerts.map((alert) => (
               <TableRow
                 key={alert.id}
                 hover
