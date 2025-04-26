@@ -68,20 +68,20 @@ const MainPage = () => {
     formData.append('video', videoFile);
 
     try {
-      // MOCK sending to backend
-      console.log('Sending video to backend...');
+      const response = await fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-      // Later this will be your real API call:
-      // await fetch('http://localhost:5000/upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-
-      alert('Video sent to server (mock)');
+      const data = await response.json();
+      console.log('Server response:', data);
+      alert('Video uploaded successfully!');
     } catch (error) {
       console.error('Error uploading video:', error);
+      alert('Upload failed!');
     }
   };
+
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
