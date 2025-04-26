@@ -36,3 +36,12 @@ Props: `open`, `onClose`, `alert` (object with details)."
 Generated `AlertDetailDialog.tsx` component with DialogTitle, DialogContent, and frame image rendering.
 
 ---
+
+## 3. Making Search Results Table Dynamic
+
+**Prompt:**
+
+"Help me update a static Material-UI Table into a dynamic Table that renders rows based on a dummy alert array. Each row should open a modal dialog showing alert details when clicked. Use TypeScript."
+
+**Result:**
+Generated dynamic TableBody using `.map()` to loop over alerts, connected click event to AlertDetailDialog.

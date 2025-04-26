@@ -27,6 +27,30 @@ const MainPage = () => {
     }
   };
 
+  const dummyAlerts = [
+    {
+      id: 1,
+      time: '2024-06-16T12:00:00Z',
+      type: 'Type A',
+      message: 'Anomaly detected',
+      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+1',
+    },
+    {
+      id: 2,
+      time: '2024-06-16T13:00:00Z',
+      type: 'Type B',
+      message: 'Another anomaly detected',
+      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+2',
+    },
+    {
+      id: 3,
+      time: '2024-06-16T14:00:00Z',
+      type: 'Type C',
+      message: 'Unusual behavior detected',
+      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+3',
+    },
+  ];
+
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Search Section */}
@@ -62,26 +86,22 @@ const MainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Later we will map real data here */}
-            <TableRow
-              hover
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                setSelectedAlert({
-                  id: 1,
-                  time: '2024-06-16T12:00:00Z',
-                  type: 'Type A',
-                  message: 'Anomaly detected',
-                  frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame' // Placeholder image
-                });
-                setDialogOpen(true);
-              }}
-            >
-              <TableCell>1</TableCell>
-              <TableCell>2024-06-16T12:00:00Z</TableCell>
-              <TableCell>Type A</TableCell>
-              <TableCell>Anomaly detected</TableCell>
-            </TableRow>
+            {dummyAlerts.map((alert) => (
+              <TableRow
+                key={alert.id}
+                hover
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setSelectedAlert(alert);
+                  setDialogOpen(true);
+                }}
+              >
+                <TableCell>{alert.id}</TableCell>
+                <TableCell>{alert.time}</TableCell>
+                <TableCell>{alert.type}</TableCell>
+                <TableCell>{alert.message}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Paper>
