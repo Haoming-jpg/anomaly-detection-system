@@ -61,6 +61,27 @@ const MainPage = () => {
     );
   });
 
+  const sendVideoToServer = async () => {
+    if (!videoFile) return;
+
+    const formData = new FormData();
+    formData.append('video', videoFile);
+
+    try {
+      // MOCK sending to backend
+      console.log('Sending video to backend...');
+
+      // Later this will be your real API call:
+      // await fetch('http://localhost:5000/upload', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+
+      alert('Video sent to server (mock)');
+    } catch (error) {
+      console.error('Error uploading video:', error);
+    }
+  };
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -76,11 +97,10 @@ const MainPage = () => {
         />
         <Button
           variant="contained"
-          color="primary"
-          onClick={handleSearch}
-          style={{ marginTop: 10 }}
+          color="secondary"
+          onClick={sendVideoToServer}
         >
-          Search
+          Send to Server
         </Button>
       </Paper>
 

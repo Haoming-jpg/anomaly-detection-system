@@ -63,3 +63,12 @@ Created computed `filteredAlerts` array using `.filter()` method, connected tabl
 
 **Result:**
 Added Button that appears only after file is uploaded. Console.log the file on click.
+
+## 6. Preparing Frontend API Call for Video Upload
+
+**Prompt:**
+
+"Help me prepare a frontend React function to upload a video file to the server. Use FormData to attach the file and POST it to a mock URL. For now, just console.log and show an alert after 'sending'. Use TypeScript."
+
+**Result:**
+Created `sendVideoToServer` function that prepares FormData, mocks sending to server, and shows success alert.
