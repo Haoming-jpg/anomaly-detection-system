@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper, Typography } from '@mui/material';
+import AlertDetailDialog from './AlertDetailDialog';
 
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<{
+    id: number;
+    time: string;
+    type: string;
+    message: string;
+    frameUrl: string;
+  } | null>(null);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
 
   const handleSearch = () => {
     console.log('Search triggered with:', searchQuery);
@@ -52,7 +63,20 @@ const MainPage = () => {
           </TableHead>
           <TableBody>
             {/* Later we will map real data here */}
-            <TableRow>
+            <TableRow
+              hover
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                setSelectedAlert({
+                  id: 1,
+                  time: '2024-06-16T12:00:00Z',
+                  type: 'Type A',
+                  message: 'Anomaly detected',
+                  frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame' // Placeholder image
+                });
+                setDialogOpen(true);
+              }}
+            >
               <TableCell>1</TableCell>
               <TableCell>2024-06-16T12:00:00Z</TableCell>
               <TableCell>Type A</TableCell>
@@ -78,6 +102,12 @@ const MainPage = () => {
           </video>
         </Paper>
       )}
+      {/* Alert Detail Dialog */}
+      <AlertDetailDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        alert={selectedAlert}
+      />
     </div>
   );
 };
