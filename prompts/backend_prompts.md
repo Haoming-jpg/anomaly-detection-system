@@ -74,3 +74,12 @@ Updated `/upload` to save uploaded file and create a new alert record in databas
 
 **Result:**
 Created a new PostgreSQL instance using AWS RDS (Free Tier), enabled public access, created a new VPC security group, and configured inbound rules to allow PostgreSQL connections on port 5432 from any IP (0.0.0.0/0) for testing.
+
+## 8. Connect to AWS RDS PostgreSQL Using pgAdmin
+
+**Prompt:**
+
+"Help me connect to my AWS RDS PostgreSQL database from my local computer using pgAdmin, and make sure I can create tables remotely."
+
+**Result:**
+Successfully connected to AWS RDS PostgreSQL instance using pgAdmin, verified that the database is accessible and ready for table creation.
