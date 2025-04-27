@@ -38,3 +38,12 @@ Created `/upload` POST route using multer middleware. Files saved in local `uplo
 
 **Result:**
 Created `db.js` to manage PostgreSQL connection. Created `/alerts` POST route to insert alert data and `/alerts` GET route to fetch all alerts.
+
+## 4. Manual Testing of /alerts Endpoint
+
+**Prompt:**
+
+"Help me manually test a POST /alerts endpoint in my Node.js backend that inserts alert data into PostgreSQL. Provide instructions for using Postman."
+
+**Result:**
+Successfully sent a test alert via Postman. Confirmed insertion into `alerts` table.
