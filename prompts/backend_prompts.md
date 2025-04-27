@@ -1,0 +1,67 @@
+# Backend Prompts - Automated Anomaly Detection System
+
+This document records all AI prompts used for backend development (Node.js + Express).
+
+---
+
+## 1. Backend Server Setup
+
+**Prompt:**
+
+"Help me set up a basic Node.js backend server using Express. It should:
+- Listen on port 5000
+- Accept CORS requests
+- Provide a simple GET '/' route that returns 'Backend is running!'
+- Prepare to handle file uploads."
+
+**Result:**
+Generated `server.js` with Express app, CORS enabled, basic test route created.
+
+---
+
+## 2. Uploading Video Files
+
+**Prompt:**
+
+"Help me set up an Express route to accept video file uploads using multer. Save uploaded files into an 'uploads/' folder locally. Respond with a JSON success message."
+
+**Result:**
+Created `/upload` POST route using multer middleware. Files saved in local `uploads/` folder. Successful upload returns a JSON message.
+
+---
+
+## 3. Connecting Backend to PostgreSQL
+
+**Prompt:**
+
+"Help me connect a Node.js backend (Express) to a local PostgreSQL database using the `pg` library. Set up a connection pool, and create routes to insert alerts (POST) and fetch all alerts (GET)."
+
+**Result:**
+Created `db.js` to manage PostgreSQL connection. Created `/alerts` POST route to insert alert data and `/alerts` GET route to fetch all alerts.
+
+## 4. Manual Testing of /alerts Endpoint
+
+**Prompt:**
+
+"Help me manually test a POST /alerts endpoint in my Node.js backend that inserts alert data into PostgreSQL. Provide instructions for using Postman."
+
+**Result:**
+Successfully sent a test alert via Postman. Confirmed insertion into `alerts` table.
+
+## 5. Implementing GET /alerts Endpoint
+
+**Prompt:**
+
+"Help me create a GET /alerts route in my Node.js backend that fetches all alert records from a PostgreSQL database and returns them as JSON sorted by timestamp."
+
+**Result:**
+Created `/alerts` GET route. Successfully retrieves all alerts and prepares them for frontend rendering.
+
+## 6. Enhancing Upload Route to Generate Alert
+
+**Prompt:**
+
+"Help me update a POST /upload route to, after receiving a video file, automatically insert a simulated anomaly alert into PostgreSQL."
+
+**Result:**
+Updated `/upload` to save uploaded file and create a new alert record in database.
