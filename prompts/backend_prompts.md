@@ -56,3 +56,12 @@ Successfully sent a test alert via Postman. Confirmed insertion into `alerts` ta
 
 **Result:**
 Created `/alerts` GET route. Successfully retrieves all alerts and prepares them for frontend rendering.
+
+## 6. Enhancing Upload Route to Generate Alert
+
+**Prompt:**
+
+"Help me update a POST /upload route to, after receiving a video file, automatically insert a simulated anomaly alert into PostgreSQL."
+
+**Result:**
+Updated `/upload` to save uploaded file and create a new alert record in database.

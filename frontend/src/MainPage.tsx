@@ -22,16 +22,16 @@ const MainPage = () => {
   }>>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/alerts');
-        setAlerts(response.data);
-      } catch (error) {
-        console.error('Error fetching alerts:', error);
-      }
-    };
+  const fetchAlerts = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/alerts');
+      setAlerts(response.data);
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchAlerts();
   }, []);
 
@@ -61,6 +61,8 @@ const MainPage = () => {
       const data = await response.json();
       console.log('Server response:', data);
       alert('Video uploaded successfully!');
+
+      fetchAlerts(); // Refresh alerts after upload
     } catch (error) {
       console.error('Error uploading video:', error);
       alert('Upload failed!');
