@@ -122,4 +122,22 @@ Created `MainPage.test.tsx` using React Testing Library and Jest. The test rende
 
 ---
 
-## 13. Mock
+## 13. Mock Axios to Prevent Real API Calls During Testing
+
+**Prompt:**
+
+"Help me correctly mock axios in my React unit tests to prevent real HTTP requests and avoid ESM import errors during frontend testing."
+
+**Result:**
+Mocked axios with `jest.mock('axios')` in `MainPage.test.tsx` and ensured that `axios.get` returns a dummy `{ data: [] }` object, preventing real network calls and fixing module parsing errors.
+
+---
+
+## 14. Fix Frontend Test Timing and Mocking Issue
+
+**Prompt:**
+
+"Help me fix the timing issues in my frontend unit tests where useEffect was trying to call axios.get before the mock was properly set up."
+
+**Result:**
+Moved axios mocking into a `beforeEach()` block and used `findByText` instead of `getByText` in the test to properly wait for asynchronous rendering.

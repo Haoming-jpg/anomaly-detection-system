@@ -65,3 +65,12 @@ Created `/alerts` GET route. Successfully retrieves all alerts and prepares them
 
 **Result:**
 Updated `/upload` to save uploaded file and create a new alert record in database.
+
+## 7. Creating AWS RDS PostgreSQL Database
+
+**Prompt:**
+
+"Help me create a new PostgreSQL database instance on AWS RDS. I want it to be publicly accessible for development, allow connections on port 5432, and be ready for backend connection."
+
+**Result:**
+Created a new PostgreSQL instance using AWS RDS (Free Tier), enabled public access, created a new VPC security group, and configured inbound rules to allow PostgreSQL connections on port 5432 from any IP (0.0.0.0/0) for testing.
