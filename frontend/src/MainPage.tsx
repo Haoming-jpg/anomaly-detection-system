@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper, Typography } from '@mui/material';
 import AlertDetailDialog from './AlertDetailDialog';
+import axios from 'axios';
 
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,9 +13,27 @@ const MainPage = () => {
     message: string;
     frameUrl: string;
   } | null>(null);
-
+  const [alerts, setAlerts] = useState<Array<{
+    id: number;
+    timestamp: string;
+    type: string;
+    message: string;
+    frame_url: string;
+  }>>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/alerts');
+        setAlerts(response.data);
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+      }
+    };
+
+    fetchAlerts();
+  }, []);
 
   const handleSearch = () => {
     console.log('Search triggered with:', searchQuery);
@@ -26,40 +45,6 @@ const MainPage = () => {
       setVideoFile(event.target.files[0]);
     }
   };
-
-  const dummyAlerts = [
-    {
-      id: 1,
-      time: '2024-06-16T12:00:00Z',
-      type: 'Type A',
-      message: 'Anomaly detected',
-      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+1',
-    },
-    {
-      id: 2,
-      time: '2024-06-16T13:00:00Z',
-      type: 'Type B',
-      message: 'Another anomaly detected',
-      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+2',
-    },
-    {
-      id: 3,
-      time: '2024-06-16T14:00:00Z',
-      type: 'Type C',
-      message: 'Unusual behavior detected',
-      frameUrl: 'https://via.placeholder.com/320x240.png?text=Frame+3',
-    },
-  ];
-
-  const filteredAlerts = dummyAlerts.filter((alert) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      alert.id.toString().includes(query) ||
-      alert.time.toLowerCase().includes(query) ||
-      alert.type.toLowerCase().includes(query) ||
-      alert.message.toLowerCase().includes(query)
-    );
-  });
 
   const sendVideoToServer = async () => {
     if (!videoFile) return;
@@ -118,18 +103,24 @@ const MainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredAlerts.map((alert) => (
+            {alerts.map((alert) => (
               <TableRow
                 key={alert.id}
                 hover
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                  setSelectedAlert(alert);
+                  setSelectedAlert({
+                    id: alert.id,
+                    time: alert.timestamp,
+                    type: alert.type,
+                    message: alert.message,
+                    frameUrl: alert.frame_url,
+                  });
                   setDialogOpen(true);
                 }}
               >
                 <TableCell>{alert.id}</TableCell>
-                <TableCell>{alert.time}</TableCell>
+                <TableCell>{new Date(alert.timestamp).toLocaleString()}</TableCell>
                 <TableCell>{alert.type}</TableCell>
                 <TableCell>{alert.message}</TableCell>
               </TableRow>

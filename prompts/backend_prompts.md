@@ -47,3 +47,12 @@ Created `db.js` to manage PostgreSQL connection. Created `/alerts` POST route to
 
 **Result:**
 Successfully sent a test alert via Postman. Confirmed insertion into `alerts` table.
+
+## 5. Implementing GET /alerts Endpoint
+
+**Prompt:**
+
+"Help me create a GET /alerts route in my Node.js backend that fetches all alert records from a PostgreSQL database and returns them as JSON sorted by timestamp."
+
+**Result:**
+Created `/alerts` GET route. Successfully retrieves all alerts and prepares them for frontend rendering.

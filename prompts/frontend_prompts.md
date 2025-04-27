@@ -72,3 +72,12 @@ Added Button that appears only after file is uploaded. Console.log the file on c
 
 **Result:**
 Created `sendVideoToServer` function that prepares FormData, mocks sending to server, and shows success alert.
+
+## 8. Fetching Real Alerts from Backend
+
+**Prompt:**
+
+"Help me update my React MainPage component to fetch alert data dynamically from a backend GET /alerts route using axios. Render the fetched alerts in a Material-UI Table."
+
+**Result:**
+Replaced dummy alerts with dynamic fetching via axios and displayed real alerts in the table.
