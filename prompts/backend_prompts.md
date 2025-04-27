@@ -29,3 +29,12 @@ Generated `server.js` with Express app, CORS enabled, basic test route created.
 Created `/upload` POST route using multer middleware. Files saved in local `uploads/` folder. Successful upload returns a JSON message.
 
 ---
+
+## 3. Connecting Backend to PostgreSQL
+
+**Prompt:**
+
+"Help me connect a Node.js backend (Express) to a local PostgreSQL database using the `pg` library. Set up a connection pool, and create routes to insert alerts (POST) and fetch all alerts (GET)."
+
+**Result:**
+Created `db.js` to manage PostgreSQL connection. Created `/alerts` POST route to insert alert data and `/alerts` GET route to fetch all alerts.
