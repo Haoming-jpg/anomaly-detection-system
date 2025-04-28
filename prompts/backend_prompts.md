@@ -119,3 +119,40 @@ Launched t2.micro Ubuntu EC2 instance, configured security group to allow SSH (2
 
 **Result:**
 Successfully connected to AWS EC2 Ubuntu server via SSH using secure key authentication, ready to deploy backend server.
+
+## 13. Install Node.js and npm on AWS EC2 Server
+
+**Prompt:**
+
+"Help me install Node.js and npm on my AWS EC2 Ubuntu instance to prepare for backend server deployment."
+
+**Result:**
+Successfully installed Node.js 20 LTS and npm on AWS EC2 Ubuntu instance using NodeSource installer.
+
+## 14. Deploy Backend Code to AWS EC2 Server
+
+**Prompt:**
+
+"Help me move my Node.js backend project to my AWS EC2 instance and install all dependencies."
+
+**Result:**
+Cloned project from GitHub into EC2, installed backend dependencies using npm, and securely created .env file with AWS RDS database credentials.
+
+## 11. Publicly Access Backend Server on AWS EC2
+
+**Prompt:**
+
+"Help me access my Node.js backend server running on my AWS EC2 instance from the public internet."
+
+**Result:**
+Accessed the backend server by visiting the EC2 public IP on port 5000.
+http://18.227.183.133:5000/. Confirmed server is publicly accessible.
+
+## 12. Connect Frontend to Publicly Deployed Backend
+
+**Prompt:**
+
+"Help me update my React frontend to connect to my publicly accessible backend server running on AWS EC2."
+
+**Result:**
+Replaced all localhost API calls with EC2 public IP, confirmed that frontend now communicates with cloud backend and database successfully.
