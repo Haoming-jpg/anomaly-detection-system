@@ -101,3 +101,21 @@ Created `alerts` table with columns id (serial primary key), timestamp, type, me
 
 **Result:**
 Updated db.js configuration to connect to AWS RDS using correct endpoint, username, and password. Backend server now inserts and reads alerts from cloud database successfully.
+
+## 11. Launch AWS EC2 Ubuntu Server for Backend Deployment
+
+**Prompt:**
+
+"Help me launch an AWS EC2 Ubuntu instance to deploy my backend Node.js server."
+
+**Result:**
+Launched t2.micro Ubuntu EC2 instance, configured security group to allow SSH (22) and application traffic (5000), and prepared for backend deployment.
+
+## 12. SSH into AWS EC2 Server
+
+**Prompt:**
+
+"Help me SSH into my AWS EC2 Ubuntu instance using my downloaded .pem key."
+
+**Result:**
+Successfully connected to AWS EC2 Ubuntu server via SSH using secure key authentication, ready to deploy backend server.
