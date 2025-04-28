@@ -83,3 +83,12 @@ Created a new PostgreSQL instance using AWS RDS (Free Tier), enabled public acce
 
 **Result:**
 Successfully connected to AWS RDS PostgreSQL instance using pgAdmin, verified that the database is accessible and ready for table creation.
+
+## 9. Create alerts Table in AWS RDS PostgreSQL
+
+**Prompt:**
+
+"Help me create the same alerts table structure in my AWS RDS PostgreSQL database that I used locally, using pgAdmin Query Tool."
+
+**Result:**
+Created `alerts` table with columns id (serial primary key), timestamp, type, message, and frame_url inside AWS RDS PostgreSQL instance, ready for backend connection.
