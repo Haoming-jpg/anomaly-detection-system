@@ -2,31 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper, Typography } from '@mui/material';
 import AlertDetailDialog from './AlertDetailDialog';
 import axios from 'axios';
-import { preprocessImageData } from './utils/yoloDetection'; // Adjust path if needed
+// import { preprocessImageData } from './utils/yoloDetection'; // Adjust path if needed
 
-function testPreprocess() {
-  // Create a dummy ImageData 640x640
-  const width = 640;
-  const height = 640;
-  const dummyPixels = new Uint8ClampedArray(width * height * 4);
+// function testPreprocess() {
+//   // Create a dummy ImageData 640x640
+//   const width = 640;
+//   const height = 640;
+//   const dummyPixels = new Uint8ClampedArray(width * height * 4);
 
-  // Fill dummy pixels with a simple pattern
-  for (let i = 0; i < dummyPixels.length; i += 4) {
-    dummyPixels[i] = 255;     // Red
-    dummyPixels[i + 1] = 0;   // Green
-    dummyPixels[i + 2] = 0;   // Blue
-    dummyPixels[i + 3] = 255; // Alpha
-  }
+//   // Fill dummy pixels with a simple pattern
+//   for (let i = 0; i < dummyPixels.length; i += 4) {
+//     dummyPixels[i] = 255;     // Red
+//     dummyPixels[i + 1] = 0;   // Green
+//     dummyPixels[i + 2] = 0;   // Blue
+//     dummyPixels[i + 3] = 255; // Alpha
+//   }
 
-  const dummyImageData = new ImageData(dummyPixels, width, height);
+//   const dummyImageData = new ImageData(dummyPixels, width, height);
 
-  const result = preprocessImageData(dummyImageData);
+//   const result = preprocessImageData(dummyImageData);
 
-  console.log("Preprocessed data (first 10 floats):", result.data.slice(0, 10));
-  console.log("Expected first value:", 1); // because red channel was 255 → normalized to 1
-}
+//   console.log("Preprocessed data (first 10 floats):", result.data.slice(0, 10));
+//   console.log("Expected first value:", 1); // because red channel was 255 → normalized to 1
+// }
 
-testPreprocess();
+// testPreprocess();
 
 
 const MainPage = () => {

@@ -48,7 +48,52 @@ export function preprocessImageData(imageData: ImageData): { data: Float32Array 
   return { data: floatData };
 }
 
-function postprocessOutput(output: Record<string, ort.Tensor>) {
-  // TODO: Parse YOLO output into [class, score, bounding box]
-  return [];
+type Detection = {
+  bbox: [number, number, number, number]; // [x_min, y_min, width, height]
+  score: number;
+  classId: number;
+};
+
+function postprocessOutput(output: Record<string, ort.Tensor>, scoreThreshold = 0.5): Detection[] {
+  const outputTensor = output[Object.keys(output)[0]]; // Assume first output
+  const data = outputTensor.data as Float32Array; // (1, 84, 8400) flattened
+  
+  const numClasses = 80;
+  const numBoxes = 8400;
+  const results: Detection[] = [];
+
+  for (let i = 0; i < numBoxes; i++) {
+    const offset = i * (numClasses + 4);
+
+    const xCenter = data[offset];
+    const yCenter = data[offset + 1];
+    const width = data[offset + 2];
+    const height = data[offset + 3];
+
+    let maxClassScore = -Infinity;
+    let classId = -1;
+
+    for (let c = 0; c < numClasses; c++) {
+      const classScore = data[offset + 4 + c];
+      if (classScore > maxClassScore) {
+        maxClassScore = classScore;
+        classId = c;
+      }
+    }
+
+    if (maxClassScore > scoreThreshold) {
+      const xMin = (xCenter - width / 2) * 640;
+      const yMin = (yCenter - height / 2) * 640;
+      const w = width * 640;
+      const h = height * 640;
+
+      results.push({
+        bbox: [xMin, yMin, w, h],
+        score: maxClassScore,
+        classId: classId,
+      });
+    }
+  }
+
+  return results;
 }

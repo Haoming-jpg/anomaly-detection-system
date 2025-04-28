@@ -158,3 +158,20 @@ Moved axios mocking into a `beforeEach()` block and used `findByText` instead of
   - Rearranges pixel layout to CHW format
   - Returns a Float32Array ready for YOLO model input
 - Verified correctness by manually testing dummy red image frames.
+
+## 16. Implement YOLOv8 Model Output Postprocessing
+
+**Prompt:**
+
+"Help me implement a postprocessing function for YOLOv8 ONNX model output in the browser. The model output is a tensor of shape [1, 84, 8400] with:
+- 4 box coordinates (center_x, center_y, width, height)
+- 80 class confidence scores
+Parse this tensor into usable bounding boxes, class IDs, and confidence scores, filtering out low-confidence detections."
+
+**Result:**
+- Created `postprocessOutput` function:
+  - Loops over 8400 candidate boxes
+  - Picks the best class with highest confidence
+  - Converts normalized coordinates to pixel positions
+  - Filters detections based on a score threshold (default 0.5)
+- Returns an array of detections including `[x_min, y_min, width, height]`, `score`, and `classId`.
