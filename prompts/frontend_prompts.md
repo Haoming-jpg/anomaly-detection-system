@@ -141,3 +141,20 @@ Mocked axios with `jest.mock('axios')` in `MainPage.test.tsx` and ensured that `
 
 **Result:**
 Moved axios mocking into a `beforeEach()` block and used `findByText` instead of `getByText` in the test to properly wait for asynchronous rendering.
+
+## 15. Implement Image Preprocessing for YOLOv8 Inference
+
+**Prompt:**
+
+"Help me preprocess an ImageData object in React to prepare it for YOLOv8 ONNX inference using onnxruntime-web. It should:
+- Normalize pixel values from 0–255 to 0–1
+- Rearrange channels from HWC (Height, Width, Channel) to CHW (Channel, Height, Width)
+- Create a Float32Array compatible with ONNX Runtime expectations."
+
+**Result:**
+- Created `preprocessImageData` function that:
+  - Takes ImageData input (640x640)
+  - Normalizes pixel values to [0, 1] range
+  - Rearranges pixel layout to CHW format
+  - Returns a Float32Array ready for YOLO model input
+- Verified correctness by manually testing dummy red image frames.
