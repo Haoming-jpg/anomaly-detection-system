@@ -138,7 +138,7 @@ Successfully installed Node.js 20 LTS and npm on AWS EC2 Ubuntu instance using N
 **Result:**
 Cloned project from GitHub into EC2, installed backend dependencies using npm, and securely created .env file with AWS RDS database credentials.
 
-## 11. Publicly Access Backend Server on AWS EC2
+## 15. Publicly Access Backend Server on AWS EC2
 
 **Prompt:**
 
@@ -148,7 +148,7 @@ Cloned project from GitHub into EC2, installed backend dependencies using npm, a
 Accessed the backend server by visiting the EC2 public IP on port 5000.
 http://18.227.183.133:5000/. Confirmed server is publicly accessible.
 
-## 12. Connect Frontend to Publicly Deployed Backend
+## 16. Connect Frontend to Publicly Deployed Backend
 
 **Prompt:**
 
@@ -156,3 +156,17 @@ http://18.227.183.133:5000/. Confirmed server is publicly accessible.
 
 **Result:**
 Replaced all localhost API calls with EC2 public IP, confirmed that frontend now communicates with cloud backend and database successfully.
+
+## 17. Set Up GitHub Actions for Continuous Deployment (CD)
+
+**Prompt:**
+
+"Help me set up a GitHub Actions workflow that automatically SSHs into my AWS EC2 server, pulls the latest code from GitHub, installs dependencies, and restarts the backend server with pm2 whenever I push to develop or main branch."
+
+**Result:**
+- Created `.github/workflows/deploy.yml` workflow file.
+- Configured GitHub Actions to trigger on `develop` and `main` branches.
+- Installed `pm2` on EC2 to manage the backend server.
+- Saved EC2 SSH private key as a GitHub repository secret (`EC2_SSH_KEY`).
+- Saved EC2 public IP and username as secrets (`EC2_HOST`, `EC2_USER`).
+- Deployment process
