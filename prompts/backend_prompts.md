@@ -92,3 +92,12 @@ Successfully connected to AWS RDS PostgreSQL instance using pgAdmin, verified th
 
 **Result:**
 Created `alerts` table with columns id (serial primary key), timestamp, type, message, and frame_url inside AWS RDS PostgreSQL instance, ready for backend connection.
+
+## 10. Update Backend to Connect to AWS RDS Database
+
+**Prompt:**
+
+"Help me update my backend database connection (db.js) to connect to my AWS RDS PostgreSQL instance instead of local PostgreSQL."
+
+**Result:**
+Updated db.js configuration to connect to AWS RDS using correct endpoint, username, and password. Backend server now inserts and reads alerts from cloud database successfully.
