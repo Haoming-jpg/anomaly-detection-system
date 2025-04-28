@@ -81,3 +81,63 @@ Created `sendVideoToServer` function that prepares FormData, mocks sending to se
 
 **Result:**
 Replaced dummy alerts with dynamic fetching via axios and displayed real alerts in the table.
+
+## 9. Refreshing Alerts After Video Upload
+
+**Prompt:**
+
+"Help me update the React frontend to re-fetch and refresh the alert list after successfully uploading a video."
+
+**Result:**
+Moved `fetchAlerts` outside `useEffect` and manually called it after video upload.
+
+## 10. Setting Up Basic CI with GitHub Actions
+
+**Prompt:**
+
+"Help me set up a GitHub Actions workflow to install dependencies, build the frontend, and run tests for both frontend and backend on every push or pull request."
+
+**Result:**
+Created `.github/workflows/ci.yml` to automate build and testing processes for the project.
+
+## 11. Allow CI to Pass Without Frontend Tests Initially
+
+**Prompt:**
+
+"Help me update my GitHub Actions CI workflow so that even if no frontend tests exist, the build should still pass successfully."
+
+**Result:**
+Updated the `ci.yml` workflow to add `--passWithNoTests` to the frontend test command, allowing the CI to pass even when no tests are present.
+
+---
+
+## 12. Set Up Basic Frontend Test for MainPage
+
+**Prompt:**
+
+"Help me create a simple unit test for my React MainPage component to ensure it renders without crashing, and test if 'Search Criteria' text appears."
+
+**Result:**
+Created `MainPage.test.tsx` using React Testing Library and Jest. The test renders `MainPage` and asserts that the 'Search Criteria' heading is visible.
+
+---
+
+## 13. Mock Axios to Prevent Real API Calls During Testing
+
+**Prompt:**
+
+"Help me correctly mock axios in my React unit tests to prevent real HTTP requests and avoid ESM import errors during frontend testing."
+
+**Result:**
+Mocked axios with `jest.mock('axios')` in `MainPage.test.tsx` and ensured that `axios.get` returns a dummy `{ data: [] }` object, preventing real network calls and fixing module parsing errors.
+
+---
+
+## 14. Fix Frontend Test Timing and Mocking Issue
+
+**Prompt:**
+
+"Help me fix the timing issues in my frontend unit tests where useEffect was trying to call axios.get before the mock was properly set up."
+
+**Result:**
+Moved axios mocking into a `beforeEach()` block and used `findByText` instead of `getByText` in the test to properly wait for asynchronous rendering.

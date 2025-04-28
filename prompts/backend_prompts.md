@@ -65,3 +65,94 @@ Created `/alerts` GET route. Successfully retrieves all alerts and prepares them
 
 **Result:**
 Updated `/upload` to save uploaded file and create a new alert record in database.
+
+## 7. Creating AWS RDS PostgreSQL Database
+
+**Prompt:**
+
+"Help me create a new PostgreSQL database instance on AWS RDS. I want it to be publicly accessible for development, allow connections on port 5432, and be ready for backend connection."
+
+**Result:**
+Created a new PostgreSQL instance using AWS RDS (Free Tier), enabled public access, created a new VPC security group, and configured inbound rules to allow PostgreSQL connections on port 5432 from any IP (0.0.0.0/0) for testing.
+
+## 8. Connect to AWS RDS PostgreSQL Using pgAdmin
+
+**Prompt:**
+
+"Help me connect to my AWS RDS PostgreSQL database from my local computer using pgAdmin, and make sure I can create tables remotely."
+
+**Result:**
+Successfully connected to AWS RDS PostgreSQL instance using pgAdmin, verified that the database is accessible and ready for table creation.
+
+## 9. Create alerts Table in AWS RDS PostgreSQL
+
+**Prompt:**
+
+"Help me create the same alerts table structure in my AWS RDS PostgreSQL database that I used locally, using pgAdmin Query Tool."
+
+**Result:**
+Created `alerts` table with columns id (serial primary key), timestamp, type, message, and frame_url inside AWS RDS PostgreSQL instance, ready for backend connection.
+
+## 10. Update Backend to Connect to AWS RDS Database
+
+**Prompt:**
+
+"Help me update my backend database connection (db.js) to connect to my AWS RDS PostgreSQL instance instead of local PostgreSQL."
+
+**Result:**
+Updated db.js configuration to connect to AWS RDS using correct endpoint, username, and password. Backend server now inserts and reads alerts from cloud database successfully.
+
+## 11. Launch AWS EC2 Ubuntu Server for Backend Deployment
+
+**Prompt:**
+
+"Help me launch an AWS EC2 Ubuntu instance to deploy my backend Node.js server."
+
+**Result:**
+Launched t2.micro Ubuntu EC2 instance, configured security group to allow SSH (22) and application traffic (5000), and prepared for backend deployment.
+
+## 12. SSH into AWS EC2 Server
+
+**Prompt:**
+
+"Help me SSH into my AWS EC2 Ubuntu instance using my downloaded .pem key."
+
+**Result:**
+Successfully connected to AWS EC2 Ubuntu server via SSH using secure key authentication, ready to deploy backend server.
+
+## 13. Install Node.js and npm on AWS EC2 Server
+
+**Prompt:**
+
+"Help me install Node.js and npm on my AWS EC2 Ubuntu instance to prepare for backend server deployment."
+
+**Result:**
+Successfully installed Node.js 20 LTS and npm on AWS EC2 Ubuntu instance using NodeSource installer.
+
+## 14. Deploy Backend Code to AWS EC2 Server
+
+**Prompt:**
+
+"Help me move my Node.js backend project to my AWS EC2 instance and install all dependencies."
+
+**Result:**
+Cloned project from GitHub into EC2, installed backend dependencies using npm, and securely created .env file with AWS RDS database credentials.
+
+## 11. Publicly Access Backend Server on AWS EC2
+
+**Prompt:**
+
+"Help me access my Node.js backend server running on my AWS EC2 instance from the public internet."
+
+**Result:**
+Accessed the backend server by visiting the EC2 public IP on port 5000.
+http://18.227.183.133:5000/. Confirmed server is publicly accessible.
+
+## 12. Connect Frontend to Publicly Deployed Backend
+
+**Prompt:**
+
+"Help me update my React frontend to connect to my publicly accessible backend server running on AWS EC2."
+
+**Result:**
+Replaced all localhost API calls with EC2 public IP, confirmed that frontend now communicates with cloud backend and database successfully.

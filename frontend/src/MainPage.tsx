@@ -24,7 +24,7 @@ const MainPage = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/alerts');
+      const response = await axios.get('http://18.227.183.133:5000/alerts');
       setAlerts(response.data);
     } catch (error) {
       console.error('Error fetching alerts:', error);
@@ -53,7 +53,7 @@ const MainPage = () => {
     formData.append('video', videoFile);
 
     try {
-      const response = await fetch('http://localhost:5000/upload', {
+      const response = await fetch('http://18.227.183.133:5000/upload', { // Updated endpoint to include 'upload'
         method: 'POST',
         body: formData,
       });
