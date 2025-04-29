@@ -54,7 +54,7 @@ type Detection = {
   classId: number;
 };
 
-function postprocessOutput(output: Record<string, ort.Tensor>, scoreThreshold = 0.5): Detection[] {
+export function postprocessOutput(output: Record<string, ort.Tensor>, scoreThreshold = 0.5): Detection[] {
   const outputTensor = output[Object.keys(output)[0]]; // Assume first output
   const data = outputTensor.data as Float32Array; // (1, 84, 8400) flattened
   
@@ -97,3 +97,62 @@ function postprocessOutput(output: Record<string, ort.Tensor>, scoreThreshold = 
 
   return results;
 }
+
+
+// Load video into hidden <video> element and draw video frames to <canvas> element
+// to extract frames at specified intervals (e.g., every second)
+export async function extractFramesFromVideo(file: File, frameInterval = 1000): Promise<ImageData[]> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      reject(new Error('Failed to get canvas context'));
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const frames: ImageData[] = [];
+
+    video.src = url;
+    video.crossOrigin = "anonymous";
+    video.muted = true;
+    video.playsInline = true;
+
+    video.addEventListener('loadedmetadata', () => {
+      canvas.width = 640;   // Resize frames to 640x640
+      canvas.height = 640;
+      video.width = 640;
+      video.height = 640;
+
+      const duration = video.duration * 1000; // ms
+      let currentTime = 0;
+
+      const captureFrame = () => {
+        if (currentTime > duration) {
+          URL.revokeObjectURL(url);
+          resolve(frames);
+          return;
+        }
+
+        video.currentTime = currentTime / 1000;
+      };
+
+      video.addEventListener('seeked', () => {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        frames.push(frame);
+        currentTime += frameInterval;
+        captureFrame();
+      });
+
+      captureFrame();
+    });
+
+    video.addEventListener('error', (e) => {
+      reject(new Error('Failed to load video'));
+    });
+  });
+}
+

@@ -175,3 +175,20 @@ Parse this tensor into usable bounding boxes, class IDs, and confidence scores, 
   - Converts normalized coordinates to pixel positions
   - Filters detections based on a score threshold (default 0.5)
 - Returns an array of detections including `[x_min, y_min, width, height]`, `score`, and `classId`.
+
+## 17. Implement Video Frame Extraction for YOLO Inference
+
+**Prompt:**
+
+"Help me create a function in React that extracts frames from an uploaded video file for object detection. It should:
+- Play the video in a hidden HTML5 video element
+- Draw frames into a canvas
+- Capture an ImageData every N milliseconds
+- Return a list of frames for running YOLO inference."
+
+**Result:**
+- Created `extractFramesFromVideo` function:
+  - Loads a video into a hidden `<video>` element
+  - Draws each frame onto a hidden `<canvas>`
+  - Extracts frames as `ImageData` objects at configurable intervals
+  - Returns an array of frames ready for YOLO processing

@@ -2,32 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper, Typography } from '@mui/material';
 import AlertDetailDialog from './AlertDetailDialog';
 import axios from 'axios';
-// import { preprocessImageData } from './utils/yoloDetection'; // Adjust path if needed
+import { runYoloDetection, extractFramesFromVideo } from './utils/yoloDetection';
 
-// function testPreprocess() {
-//   // Create a dummy ImageData 640x640
-//   const width = 640;
-//   const height = 640;
-//   const dummyPixels = new Uint8ClampedArray(width * height * 4);
+async function handleUploadedVideo(file: File) {
+  const frames = await extractFramesFromVideo(file, 1000); // every 1 second
 
-//   // Fill dummy pixels with a simple pattern
-//   for (let i = 0; i < dummyPixels.length; i += 4) {
-//     dummyPixels[i] = 255;     // Red
-//     dummyPixels[i + 1] = 0;   // Green
-//     dummyPixels[i + 2] = 0;   // Blue
-//     dummyPixels[i + 3] = 255; // Alpha
-//   }
+  for (const frame of frames) {
+    const detections = await runYoloDetection(frame);
 
-//   const dummyImageData = new ImageData(dummyPixels, width, height);
+    // Filter detections: keep only confident ones
+    const filteredDetections = detections.filter(d => d.score > 0.5);
 
-//   const result = preprocessImageData(dummyImageData);
-
-//   console.log("Preprocessed data (first 10 floats):", result.data.slice(0, 10));
-//   console.log("Expected first value:", 1); // because red channel was 255 → normalized to 1
-// }
-
-// testPreprocess();
-
+    console.log('Filtered Detections:', filteredDetections);
+  }
+}
 
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,7 +56,9 @@ const MainPage = () => {
 
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setVideoFile(event.target.files[0]);
+      const file = event.target.files[0];
+      setVideoFile(file);
+      handleUploadedVideo(file);
     }
   };
 
