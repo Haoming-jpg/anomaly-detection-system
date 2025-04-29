@@ -141,3 +141,108 @@ Mocked axios with `jest.mock('axios')` in `MainPage.test.tsx` and ensured that `
 
 **Result:**
 Moved axios mocking into a `beforeEach()` block and used `findByText` instead of `getByText` in the test to properly wait for asynchronous rendering.
+
+## 15. Implement Image Preprocessing for YOLOv8 Inference
+
+**Prompt:**
+
+"Help me preprocess an ImageData object in React to prepare it for YOLOv8 ONNX inference using onnxruntime-web. It should:
+- Normalize pixel values from 0–255 to 0–1
+- Rearrange channels from HWC (Height, Width, Channel) to CHW (Channel, Height, Width)
+- Create a Float32Array compatible with ONNX Runtime expectations."
+
+**Result:**
+- Created `preprocessImageData` function that:
+  - Takes ImageData input (640x640)
+  - Normalizes pixel values to [0, 1] range
+  - Rearranges pixel layout to CHW format
+  - Returns a Float32Array ready for YOLO model input
+- Verified correctness by manually testing dummy red image frames.
+
+## 16. Implement YOLOv8 Model Output Postprocessing
+
+**Prompt:**
+
+"Help me implement a postprocessing function for YOLOv8 ONNX model output in the browser. The model output is a tensor of shape [1, 84, 8400] with:
+- 4 box coordinates (center_x, center_y, width, height)
+- 80 class confidence scores
+Parse this tensor into usable bounding boxes, class IDs, and confidence scores, filtering out low-confidence detections."
+
+**Result:**
+- Created `postprocessOutput` function:
+  - Loops over 8400 candidate boxes
+  - Picks the best class with highest confidence
+  - Converts normalized coordinates to pixel positions
+  - Filters detections based on a score threshold (default 0.5)
+- Returns an array of detections including `[x_min, y_min, width, height]`, `score`, and `classId`.
+
+## 17. Implement Video Frame Extraction for YOLO Inference
+
+**Prompt:**
+
+"Help me create a function in React that extracts frames from an uploaded video file for object detection. It should:
+- Play the video in a hidden HTML5 video element
+- Draw frames into a canvas
+- Capture an ImageData every N milliseconds
+- Return a list of frames for running YOLO inference."
+
+**Result:**
+- Created `extractFramesFromVideo` function:
+  - Loads a video into a hidden `<video>` element
+  - Draws each frame onto a hidden `<canvas>`
+  - Extracts frames as `ImageData` objects at configurable intervals
+  - Returns an array of frames ready for YOLO processing
+
+## 18. Capture and Upload Frames for Alert Creation
+
+**Prompt:**
+
+"Help me create a utility function in React that captures a Canvas frame as a Blob image (PNG), and upload it to my backend server for storage."
+
+**Result:**
+- Created `captureFrameAsBlob(canvas)` to convert a Canvas frame into a Blob.
+- Created `uploadFrame(blob, filename)` to POST the Blob to the backend `/upload_frame` endpoint.
+- Frames are saved as image files on the backend server, and their URLs are returned for use in alerts.
+
+## 19. Create Alerts from YOLO Detections
+
+**Prompt:**
+
+"Help me create a React utility function that takes a YOLO detection result, attaches the saved frame URL, and POSTs an alert JSON object to the backend /alerts endpoint."
+
+**Result:**
+- Created `createAlertFromDetection(detection, frameUrl)` function.
+- Constructs an alert with timestamp, detected type (class name), confidence message, and frame URL.
+- Sends the alert to the backend using Axios POST request.
+
+## 20. Integrate Full Frame-to-Alert Flow
+
+**Prompt:**
+
+"Help me integrate a full workflow in my React frontend: 
+- Extract frames from uploaded video
+- Run YOLOv8 detections
+- Capture frames with Canvas
+- Upload frames to backend
+- Create alerts based on detections and uploaded frame URLs."
+
+**Result:**
+- Updated `handleUploadedVideo` function:
+  - Extracts frames every second
+  - Runs YOLO detections
+  - Captures frame images and uploads to backend
+  - Creates and posts alerts to backend `/alerts` endpoint
+- Fully automated end-to-end alert creation after video upload.
+
+## 21. Refactor MainPage for Local Video Detection Only
+
+**Prompt:**
+
+"Help me refactor my React frontend MainPage.tsx to remove the full video upload to backend. 
+Only allow uploading a video to browser, extracting frames, running YOLO detection, uploading frames, and creating alerts."
+
+**Result:**
+- Deleted `sendVideoToServer` function and button.
+- Updated `handleUpload` to directly run frame extraction and alert creation.
+- Refreshed alerts after processing video.
+- Simplified UI to only focus on in-browser detection flow.
