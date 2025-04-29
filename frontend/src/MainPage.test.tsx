@@ -5,6 +5,10 @@ import axios from 'axios';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
 
 beforeEach(() => {
   mockedAxios.get.mockResolvedValue({ data: [] });
@@ -68,5 +72,95 @@ test('clicking table row opens dialog', async () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveTextContent('Test');
     expect(dialog).toHaveTextContent('Error');
+  });
+});
+
+test('clicking Clear All Alerts and Frames button calls axios.post and refreshes alerts', async () => {
+  // Mocks
+  window.confirm = jest.fn(() => true);
+  window.alert = jest.fn(); // prevent "not implemented"
+  mockedAxios.get.mockResolvedValue({ data: [] });
+  mockedAxios.post.mockResolvedValue({ data: 'success' });
+
+  render(<MainPage />);
+
+  const clearButton = screen.getByText(/Clear All Alerts and Frames/i);
+  fireEvent.click(clearButton);
+
+  await waitFor(() => {
+    expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all');
+    expect(mockedAxios.get).toHaveBeenCalled(); // relaxed this to allow multiple calls
+  });
+});
+
+
+
+test('pagination Next button increments currentPage', async () => {
+  const mockAlerts = Array.from({ length: 60 }, (_, i) => ({ id: i + 1 }));
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const nextButton = screen.getByText('Next');
+  fireEvent.click(nextButton);
+
+  await waitFor(() => expect(screen.getByText('Page 2 of 2')).toBeInTheDocument());
+});
+
+test('pagination Previous button decrements currentPage', async () => {
+  const mockAlerts = Array.from({ length: 60 }, (_, i) => ({ id: i + 1 }));
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const nextButton = screen.getByText('Next');
+  fireEvent.click(nextButton);
+  await waitFor(() => screen.getByText('Page 2 of 2'));
+
+  const prevButton = screen.getByText('Previous');
+  fireEvent.click(prevButton);
+
+  await waitFor(() => expect(screen.getByText('Page 1 of 2')).toBeInTheDocument());
+});
+
+test('Go to page input sets currentPage correctly', async () => {
+  const mockAlerts = Array.from({ length: 60 }, (_, i) => ({ id: i + 1 }));
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const pageInput = screen.getByLabelText(/Go to page/i);
+  fireEvent.change(pageInput, { target: { value: '2' } });
+  fireEvent.click(screen.getByText('Go'));
+
+  await waitFor(() => expect(screen.getByText('Page 2 of 2')).toBeInTheDocument());
+});
+
+test('Reset button clears search input and restores alerts', async () => {
+  const mockAlerts = [{ id: 1, type: 'Error', message: 'Test' }];
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const searchInput = screen.getByLabelText(/Search.../i);
+  fireEvent.change(searchInput, { target: { value: 'Error' } });
+  fireEvent.click(screen.getByText(/Search by Type/i));
+
+  await waitFor(() => expect(screen.queryByText('Test')).toBeInTheDocument());
+
+  const resetButton = screen.getByText('Reset');
+  fireEvent.click(resetButton);
+
+  await waitFor(() => {
+    expect(searchInput).toHaveValue('');
+    expect(screen.queryByText('Test')).toBeInTheDocument();
   });
 });

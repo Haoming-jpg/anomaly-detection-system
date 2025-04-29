@@ -71,3 +71,25 @@ Use React Testing Library and jest.mock('axios').
 - All tests passed using `npm test`
 - Mocked Axios responses using `jest.mock('axios')`
 - Verified dialog behavior, alert rendering, and filter logic
+
+## 3. Additional Tests for MainPage.tsx – Pagination, Reset, Clear
+
+**Prompt:**
+
+Please help me increase coverage for `MainPage.tsx` by testing:
+- The “Clear All Alerts and Frames” button behavior (with mocked `window.confirm` and `axios.post`)
+- Pagination: “Next”, “Previous”, and “Go to Page” controls
+- The “Reset” button restoring search input and full alert list
+
+Tests should use React Testing Library and properly mock axios.
+
+**Result:**
+- Added the following test cases to `MainPage.test.tsx`:
+  - `clicking Clear All Alerts and Frames button calls axios.post and refreshes alerts`
+  - `pagination Next button increments currentPage`
+  - `pagination Previous button decrements currentPage`
+  - `Go to page input sets currentPage correctly`
+  - `Reset button clears search input and restores alerts`
+- Used `jest.fn()` to mock `window.confirm` and `window.alert`
+- Used `Array.from()` to simulate multiple alerts for pagination
+- All tests passed with `npm run test` and contributed to increased code coverage
