@@ -233,3 +233,16 @@ Parse this tensor into usable bounding boxes, class IDs, and confidence scores, 
   - Captures frame images and uploads to backend
   - Creates and posts alerts to backend `/alerts` endpoint
 - Fully automated end-to-end alert creation after video upload.
+
+## 21. Refactor MainPage for Local Video Detection Only
+
+**Prompt:**
+
+"Help me refactor my React frontend MainPage.tsx to remove the full video upload to backend. 
+Only allow uploading a video to browser, extracting frames, running YOLO detection, uploading frames, and creating alerts."
+
+**Result:**
+- Deleted `sendVideoToServer` function and button.
+- Updated `handleUpload` to directly run frame extraction and alert creation.
+- Refreshed alerts after processing video.
+- Simplified UI to only focus on in-browser detection flow.

@@ -22,7 +22,6 @@ yarn-error.log*
 /backend/dist
 /backend/.env
 /backend/.env.local
-/backend/upload
 
 # Ignore all system-specific files
 Thumbs.db

@@ -183,3 +183,17 @@ Correct the field naming so alerts are inserted properly into the PostgreSQL dat
 - Updated `/alerts` route to destructure `frame_url` (not `frameUrl`) from `req.body`.
 - Ensured database insert query uses the correct field names.
 - Alerts are now inserted correctly into RDS after frame upload and YOLO detection.
+
+## 19. Refactor Server to Remove Video Upload Endpoint
+
+**Prompt:**
+
+"Help me clean up my Express backend server.js. 
+Remove the unnecessary /upload route and multer video upload setup, 
+keeping only the /upload_frame route for frame uploads and /alerts route for creating/fetching alerts."
+
+**Result:**
+- Deleted the `/upload` endpoint for full video uploads.
+- Removed `upload = multer({ dest: 'uploads/' })` unused setup.
+- Kept only `/upload_frame` for frame uploads and `/alerts` for alert management.
+- Server is now clean and matches in-browser detection architecture.
