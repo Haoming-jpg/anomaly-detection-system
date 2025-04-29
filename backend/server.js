@@ -47,12 +47,13 @@ app.post('/upload', upload.single('video'), async (req, res) => {
 });
 
 app.post('/alerts', async (req, res) => {
-  const { timestamp, type, message, frameUrl } = req.body;
-
+  const { timestamp, type, message, frame_url } = req.body;
+  
+  console.log('Received alert data:', { timestamp, type, message, frame_url });
   try {
     const result = await db.query(
       'INSERT INTO alerts (timestamp, type, message, frame_url) VALUES ($1, $2, $3, $4) RETURNING *',
-      [timestamp, type, message, frameUrl]
+      [timestamp, type, message, frame_url]
     );
 
     res.status(201).json(result.rows[0]);
@@ -61,6 +62,7 @@ app.post('/alerts', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.get('/alerts', async (req, res) => {
   try {

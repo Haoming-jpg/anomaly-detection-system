@@ -8,16 +8,49 @@ import { captureFrameAsBlob } from './utils/frameCapture';
 import { createAlertFromDetection } from './utils/createAlert';
 
 async function handleUploadedVideo(file: File) {
-  const frames = await extractFramesFromVideo(file, 1000); // every 1 second
+  const frames = await extractFramesFromVideo(file, 1000); // Capture frame every 1s
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 640;
+  canvas.height = 640;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    console.error('Failed to get canvas context');
+    return;
+  }
+
+  let frameCount = 0;
 
   for (const frame of frames) {
-    const detections = await runYoloDetection(frame);
+    frameCount++;
 
-    // Filter detections: keep only confident ones
+    // 1. Draw the frame onto the hidden canvas
+    ctx.putImageData(frame, 0, 0);
+
+    // 2. Run YOLO detection
+    const detections = await runYoloDetection(frame);
     const filteredDetections = detections.filter(d => d.score > 0.5);
 
-    console.log('Filtered Detections:', filteredDetections);
+    if (filteredDetections.length > 0) {
+      // 3. Capture canvas as Blob
+      const blob = await captureFrameAsBlob(canvas);
+
+      // 4. Upload frame image to backend
+      const filename = `frame-${Date.now()}-${frameCount}.png`;
+      const frameUrl = await uploadFrame(blob, filename);
+
+      // 5. For each detection, create an alert
+      for (const detection of filteredDetections) {
+        await createAlertFromDetection(detection, frameUrl);
+      }
+    }
+
+    // (Optional) delay between frames if needed
+    await new Promise(res => setTimeout(res, 1000));
   }
+
+  alert('Video processing complete. Alerts have been created!');
 }
 
 const MainPage = () => {
@@ -57,13 +90,15 @@ const MainPage = () => {
     // You can add search logic here
   };
 
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setVideoFile(file);
-      handleUploadedVideo(file);
+      await handleUploadedVideo(file);
+      await fetchAlerts();
     }
   };
+
 
   const sendVideoToServer = async () => {
     if (!videoFile) return;

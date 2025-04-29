@@ -170,3 +170,16 @@ Replaced all localhost API calls with EC2 public IP, confirmed that frontend now
 - Saved EC2 SSH private key as a GitHub repository secret (`EC2_SSH_KEY`).
 - Saved EC2 public IP and username as secrets (`EC2_HOST`, `EC2_USER`).
 - Deployment process
+
+## 18. Fix Field Naming in /alerts Endpoint
+
+**Prompt:**
+
+"Help me debug and fix my Express backend `/alerts` POST endpoint. 
+The frontend sends `frame_url`, but backend was reading `frameUrl`.
+Correct the field naming so alerts are inserted properly into the PostgreSQL database."
+
+**Result:**
+- Updated `/alerts` route to destructure `frame_url` (not `frameUrl`) from `req.body`.
+- Ensured database insert query uses the correct field names.
+- Alerts are now inserted correctly into RDS after frame upload and YOLO detection.

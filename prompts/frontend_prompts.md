@@ -214,3 +214,22 @@ Parse this tensor into usable bounding boxes, class IDs, and confidence scores, 
 - Created `createAlertFromDetection(detection, frameUrl)` function.
 - Constructs an alert with timestamp, detected type (class name), confidence message, and frame URL.
 - Sends the alert to the backend using Axios POST request.
+
+## 20. Integrate Full Frame-to-Alert Flow
+
+**Prompt:**
+
+"Help me integrate a full workflow in my React frontend: 
+- Extract frames from uploaded video
+- Run YOLOv8 detections
+- Capture frames with Canvas
+- Upload frames to backend
+- Create alerts based on detections and uploaded frame URLs."
+
+**Result:**
+- Updated `handleUploadedVideo` function:
+  - Extracts frames every second
+  - Runs YOLO detections
+  - Captures frame images and uploads to backend
+  - Creates and posts alerts to backend `/alerts` endpoint
+- Fully automated end-to-end alert creation after video upload.
