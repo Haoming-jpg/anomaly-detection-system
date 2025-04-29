@@ -95,7 +95,7 @@ app.post('/clear_all', async (req, res) => {
     res.status(500).json({ error: 'Failed to clear all' });
   }
 });
-
+app.use('/frames', express.static(path.join(__dirname, 'frames')));
 
 // Start server
 app.listen(port, () => {

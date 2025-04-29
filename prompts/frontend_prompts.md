@@ -283,3 +283,15 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Confirmed user action with a popup (`window.confirm`)
 - Called backend POST `/clear_all` to perform full reset
 - Refreshed alert table after successful clearing
+
+## 25. Display Supporting Frame Image in Alert Detail Dialog
+
+**Prompt:**
+
+"I want users to see the frame image associated with each alert when they open the AlertDetailDialog. Help me display the uploaded supporting frame image properly inside the dialog."
+
+**Result:**
+- Passed `frameUrl` into `AlertDetailDialog`
+- Built full absolute URL to the backend server (`http://3.145.95.9:5000/frames/xxx.png`)
+- Rendered the frame image using an `<img>` tag inside the dialog
+- Ensured images load correctly and are styled to fit the dialog
