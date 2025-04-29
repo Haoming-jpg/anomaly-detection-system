@@ -295,3 +295,16 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Built full absolute URL to the backend server (`http://3.145.95.9:5000/frames/xxx.png`)
 - Rendered the frame image using an `<img>` tag inside the dialog
 - Ensured images load correctly and are styled to fit the dialog
+
+## 26. Implement Search and Reset Functionality for Alert List
+
+**Prompt:**
+
+"I want to add full search functionality to my alert list. I need two buttons: one for searching alerts by type, one for searching by message. If the input is empty, the search should reset to show all alerts. I also want a Reset button to clear the search and reload all alerts."
+
+**Result:**
+- Added `Search by Type` button to filter alerts based on the `type` field
+- Added `Search by Message` button to filter alerts based on the `message` field
+- Added a `Reset` button to clear the search input and reload the full alert list
+- Search and reset operations reset pagination back to page 1
+- Pagination (100 alerts per page) still works after search and reset

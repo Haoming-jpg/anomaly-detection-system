@@ -27,13 +27,21 @@ const MainPage = () => {
   }>>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const alertsPerPage = 100;
+  const alertsPerPage = 50;
   const [pageInput, setPageInput] = useState('');
+  const [filteredAlerts, setFilteredAlerts] = useState<Array<{
+    id: number;
+    timestamp: string;
+    type: string;
+    message: string;
+    frame_url: string;
+  }>>([]);
 
   const fetchAlerts = async () => {
     try {
       const response = await axios.get('http://3.145.95.9:5000/alerts');
       setAlerts(response.data);
+      setFilteredAlerts(response.data);
     } catch (error) {
       console.error('Error fetching alerts:', error);
     }
@@ -43,10 +51,28 @@ const MainPage = () => {
     fetchAlerts();
   }, []);
 
-  const handleSearch = () => {
-    console.log('Search triggered with:', searchQuery);
-    // You can add search logic here later if needed
+  const handleSearchByType = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredAlerts(alerts); // Reset to all
+    } else {
+      setFilteredAlerts(alerts.filter(alert =>
+        alert.type.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    }
+    setCurrentPage(1);
   };
+
+  const handleSearchByMessage = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredAlerts(alerts); // Reset to all
+    } else {
+      setFilteredAlerts(alerts.filter(alert =>
+        alert.message.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    }
+    setCurrentPage(1);
+  };
+
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -55,6 +81,12 @@ const MainPage = () => {
       await processVideo(file);
       await fetchAlerts();  // Refresh table after processing
     }
+  };
+
+  const handleResetSearch = () => {
+    setSearchQuery('');
+    setFilteredAlerts(alerts);
+    setCurrentPage(1);
   };
 
   async function processVideo(file: File) {
@@ -114,8 +146,9 @@ const MainPage = () => {
 
   const indexOfLastAlert = currentPage * alertsPerPage;
   const indexOfFirstAlert = indexOfLastAlert - alertsPerPage;
-  const currentAlerts = alerts.slice(indexOfFirstAlert, indexOfLastAlert);
-  const totalPages = Math.ceil(alerts.length / alertsPerPage);
+  const currentAlerts = filteredAlerts.slice(indexOfFirstAlert, indexOfLastAlert);
+  const totalPages = Math.ceil(filteredAlerts.length / alertsPerPage);
+
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Search Section */}
@@ -131,11 +164,28 @@ const MainPage = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSearch}
+          onClick={handleSearchByType}
+          style={{ marginTop: 10, marginRight: 10 }}
+        >
+          Search by Type
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSearchByMessage}
           style={{ marginTop: 10 }}
         >
-          Search
+          Search by Message
         </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleResetSearch}
+          style={{ marginTop: 10, marginLeft: 10 }}
+        >
+          Reset
+        </Button>
+
       </Paper>
 
       {/* Results Table Section */}
