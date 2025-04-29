@@ -192,3 +192,25 @@ Parse this tensor into usable bounding boxes, class IDs, and confidence scores, 
   - Draws each frame onto a hidden `<canvas>`
   - Extracts frames as `ImageData` objects at configurable intervals
   - Returns an array of frames ready for YOLO processing
+
+## 18. Capture and Upload Frames for Alert Creation
+
+**Prompt:**
+
+"Help me create a utility function in React that captures a Canvas frame as a Blob image (PNG), and upload it to my backend server for storage."
+
+**Result:**
+- Created `captureFrameAsBlob(canvas)` to convert a Canvas frame into a Blob.
+- Created `uploadFrame(blob, filename)` to POST the Blob to the backend `/upload_frame` endpoint.
+- Frames are saved as image files on the backend server, and their URLs are returned for use in alerts.
+
+## 19. Create Alerts from YOLO Detections
+
+**Prompt:**
+
+"Help me create a React utility function that takes a YOLO detection result, attaches the saved frame URL, and POSTs an alert JSON object to the backend /alerts endpoint."
+
+**Result:**
+- Created `createAlertFromDetection(detection, frameUrl)` function.
+- Constructs an alert with timestamp, detected type (class name), confidence message, and frame URL.
+- Sends the alert to the backend using Axios POST request.

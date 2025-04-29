@@ -3,6 +3,9 @@ import { TextField, Button, Table, TableHead, TableRow, TableCell, TableBody, Pa
 import AlertDetailDialog from './AlertDetailDialog';
 import axios from 'axios';
 import { runYoloDetection, extractFramesFromVideo } from './utils/yoloDetection';
+import { uploadFrame } from './utils/uploadFrame';
+import { captureFrameAsBlob } from './utils/frameCapture';
+import { createAlertFromDetection } from './utils/createAlert';
 
 async function handleUploadedVideo(file: File) {
   const frames = await extractFramesFromVideo(file, 1000); // every 1 second

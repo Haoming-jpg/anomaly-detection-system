@@ -13,6 +13,7 @@ app.use(express.json());
 
 // Multer setup for file upload
 const upload = multer({ dest: 'uploads/' });
+const uploadFrame = multer({ storage: storage });
 
 // Test route
 app.get('/', (req, res) => {
@@ -69,6 +70,25 @@ app.get('/alerts', async (req, res) => {
     console.error('Error fetching alerts:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+// Set up storage for frames
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'frames/'); // Save under frames/ directory
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'frame-' + uniqueSuffix + path.extname(file.originalname)); // e.g., frame-123456789.png
+  }
+});
+
+app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No frame uploaded.');
+  }
+  const frameUrl = '/frames/' + req.file.filename;
+  res.json({ frameUrl: frameUrl });
 });
 
 
