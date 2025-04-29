@@ -197,3 +197,15 @@ keeping only the /upload_frame route for frame uploads and /alerts route for cre
 - Removed `upload = multer({ dest: 'uploads/' })` unused setup.
 - Kept only `/upload_frame` for frame uploads and `/alerts` for alert management.
 - Server is now clean and matches in-browser detection architecture.
+
+## 20. Add Clear All API to Reset Database and Frame Storage
+
+**Prompt:**
+
+"I want to add a backend API that clears all alerts from my PostgreSQL database and deletes all uploaded frame images from the frames/ directory."
+
+**Result:**
+- Created POST `/clear_all` endpoint in Express server
+- DELETEs all rows from `alerts` table
+- Deletes all files under `frames/` folder
+- Returns success or failure JSON response

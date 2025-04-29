@@ -7,6 +7,7 @@ import { uploadFrame } from './utils/uploadFrame';
 import { captureFrameAsBlob } from './utils/frameCapture';
 import { createAlertFromDetection } from './utils/createAlert';
 
+
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -25,6 +26,9 @@ const MainPage = () => {
     frame_url: string;
   }>>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const alertsPerPage = 100;
+  const [pageInput, setPageInput] = useState('');
 
   const fetchAlerts = async () => {
     try {
@@ -108,7 +112,10 @@ const MainPage = () => {
     alert('Video processing complete.');
   }
 
-
+  const indexOfLastAlert = currentPage * alertsPerPage;
+  const indexOfFirstAlert = indexOfLastAlert - alertsPerPage;
+  const currentAlerts = alerts.slice(indexOfFirstAlert, indexOfLastAlert);
+  const totalPages = Math.ceil(alerts.length / alertsPerPage);
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Search Section */}
@@ -144,7 +151,7 @@ const MainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {alerts.map((alert) => (
+            {currentAlerts.map((alert) => (
               <TableRow
                 key={alert.id}
                 hover
@@ -168,10 +175,75 @@ const MainPage = () => {
             ))}
           </TableBody>
         </Table>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+          <Button
+            variant="contained"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            style={{ marginRight: 10 }}
+          >
+            Previous
+          </Button>
+          <Typography variant="body1" style={{ margin: '0 10px' }}>
+            Page {currentPage} of {totalPages}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            style={{ marginLeft: 10 }}
+          >
+            Next
+          </Button>
+          <div style={{ marginLeft: 20, display: 'flex', alignItems: 'center' }}>
+            <TextField
+              label="Go to page"
+              variant="outlined"
+              size="small"
+              value={pageInput}
+              onChange={(e) => setPageInput(e.target.value)}
+              style={{ width: 100, marginRight: 10 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                const pageNumber = Number(pageInput);
+                if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+                  setCurrentPage(pageNumber);
+                } else {
+                  alert('Invalid page number');
+                }
+              }}
+            >
+              Go
+            </Button>
+          </div>
+        </div>
+
       </Paper>
 
       {/* Upload Video Section */}
       <Paper style={{ padding: 20 }}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={async () => {
+            if (window.confirm('Are you sure you want to delete all alerts and frames? This action cannot be undone.')) {
+              try {
+                await axios.post('http://3.145.95.9:5000/clear_all');
+                alert('All alerts and frames cleared!');
+                fetchAlerts(); // Refresh table
+              } catch (error) {
+                console.error('Error clearing all:', error);
+                alert('Failed to clear alerts and frames.');
+              }
+            }
+          }}
+          style={{ marginTop: 10 }}
+        >
+          Clear All Alerts and Frames
+        </Button>
+
         <Typography variant="h5" gutterBottom>Upload Video</Typography>
         <input
           type="file"

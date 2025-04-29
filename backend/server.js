@@ -3,9 +3,10 @@ const cors = require('cors');
 const multer = require('multer');
 const db = require('./db');
 const path = require('path');
-
+const fs = require('fs');
 const app = express();
 const port = 5000;
+
 
 // Middleware
 app.use(cors());
@@ -67,6 +68,34 @@ app.get('/alerts', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.post('/clear_all', async (req, res) => {
+  try {
+    // 1. Clear all alerts from the database
+    await db.query('DELETE FROM alerts');
+
+    // 2. Delete all frames from frames/ directory
+    const framesPath = path.join(__dirname, 'frames');
+    fs.readdir(framesPath, (err, files) => {
+      if (err) {
+        console.error('Error reading frames directory:', err);
+        return res.status(500).json({ error: 'Failed to clear frames' });
+      }
+
+      for (const file of files) {
+        fs.unlink(path.join(framesPath, file), (err) => {
+          if (err) console.error('Error deleting frame:', file, err);
+        });
+      }
+    });
+
+    res.status(200).json({ message: 'All alerts and frames cleared successfully!' });
+  } catch (error) {
+    console.error('Error clearing all:', error);
+    res.status(500).json({ error: 'Failed to clear all' });
+  }
+});
+
 
 // Start server
 app.listen(port, () => {

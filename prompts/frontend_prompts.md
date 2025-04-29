@@ -259,3 +259,27 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Added optional logic to skip every 2nd frame (process only even-indexed frames)
 - Greatly improved total processing speed (~4x–5x faster)
 - Pipeline remains stable, alerts are still generated properly
+
+## 23. Add Manual Page Jump for Pagination
+
+**Prompt:**
+
+"I want to allow users to input a page number and directly jump to that page when browsing the alert list. Help me add a TextField input and Go button for manual page navigation."
+
+**Result:**
+- Added `pageInput` state to track user input
+- Added a `<TextField>` and a `<Button>` next to Previous/Next buttons
+- Clicking Go checks input validity and updates `currentPage`
+- User can now quickly jump to any page directly
+
+## 24. Add Clear All Button in Frontend to Trigger Backend Reset
+
+**Prompt:**
+
+"I want to add a Clear All button in my frontend MainPage. When clicked, it should send a POST request to the backend /clear_all endpoint, and refresh the alert table after clearing."
+
+**Result:**
+- Added `Clear All Alerts and Frames` button
+- Confirmed user action with a popup (`window.confirm`)
+- Called backend POST `/clear_all` to perform full reset
+- Refreshed alert table after successful clearing
