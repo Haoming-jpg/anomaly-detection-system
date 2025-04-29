@@ -30,5 +30,5 @@ export async function createAlertFromDetection(
     frame_url: frameUrl,
   };
 
-  await axios.post('http://18.227.183.133:5000/alerts', alert);
+  await axios.post('http://3.145.95.9:5000/alerts', alert);
 }

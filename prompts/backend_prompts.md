@@ -146,7 +146,7 @@ Cloned project from GitHub into EC2, installed backend dependencies using npm, a
 
 **Result:**
 Accessed the backend server by visiting the EC2 public IP on port 5000.
-http://18.227.183.133:5000/. Confirmed server is publicly accessible.
+http://3.145.95.9:5000/. Confirmed server is publicly accessible.
 
 ## 16. Connect Frontend to Publicly Deployed Backend
 

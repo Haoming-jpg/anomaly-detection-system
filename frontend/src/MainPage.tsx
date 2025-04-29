@@ -28,7 +28,7 @@ const MainPage = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await axios.get('http://18.227.183.133:5000/alerts');
+      const response = await axios.get('http://3.145.95.9:5000/alerts');
       setAlerts(response.data);
     } catch (error) {
       console.error('Error fetching alerts:', error);
