@@ -2,17 +2,26 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const db = require('./db');
+const path = require('path');
 
 const app = express();
 const port = 5000;
-const path = require('path');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Multer setup for file upload
-const upload = multer({ dest: 'uploads/' });
+// Set up storage for frames
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'frames/'); // Save under frames/ directory
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'frame-' + uniqueSuffix + path.extname(file.originalname)); // e.g., frame-123456789.png
+  }
+});
+
 const uploadFrame = multer({ storage: storage });
 
 // Test route
@@ -20,36 +29,21 @@ app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
-// Upload route
-app.post('/upload', upload.single('video'), async (req, res) => {
+// Upload frame route
+app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
   if (!req.file) {
-    return res.status(400).send({ error: 'No video file uploaded' });
+    return res.status(400).send('No frame uploaded.');
   }
-
-  console.log('Received file:', req.file);
-
-  try {
-    const now = new Date();
-    const type = "Simulated Anomaly";
-    const message = "Anomaly detected from uploaded video.";
-    const frameUrl = "https://via.placeholder.com/320x240.png?text=Frame"; // Later this will be real
-
-    const result = await db.query(
-      'INSERT INTO alerts (timestamp, type, message, frame_url) VALUES ($1, $2, $3, $4) RETURNING *',
-      [now, type, message, frameUrl]
-    );
-
-    res.status(201).send({ message: 'Video uploaded and alert generated!', alert: result.rows[0] });
-  } catch (error) {
-    console.error('Error processing upload:', error);
-    res.status(500).send({ error: 'Failed to process video' });
-  }
+  const frameUrl = '/frames/' + req.file.filename;
+  res.json({ frameUrl: frameUrl });
 });
 
+// Create alert route
 app.post('/alerts', async (req, res) => {
   const { timestamp, type, message, frame_url } = req.body;
-  
+
   console.log('Received alert data:', { timestamp, type, message, frame_url });
+
   try {
     const result = await db.query(
       'INSERT INTO alerts (timestamp, type, message, frame_url) VALUES ($1, $2, $3, $4) RETURNING *',
@@ -63,7 +57,7 @@ app.post('/alerts', async (req, res) => {
   }
 });
 
-
+// Fetch alerts route
 app.get('/alerts', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM alerts ORDER BY timestamp DESC');
@@ -73,26 +67,6 @@ app.get('/alerts', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-// Set up storage for frames
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'frames/'); // Save under frames/ directory
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'frame-' + uniqueSuffix + path.extname(file.originalname)); // e.g., frame-123456789.png
-  }
-});
-
-app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No frame uploaded.');
-  }
-  const frameUrl = '/frames/' + req.file.filename;
-  res.json({ frameUrl: frameUrl });
-});
-
 
 // Start server
 app.listen(port, () => {

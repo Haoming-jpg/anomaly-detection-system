@@ -7,52 +7,6 @@ import { uploadFrame } from './utils/uploadFrame';
 import { captureFrameAsBlob } from './utils/frameCapture';
 import { createAlertFromDetection } from './utils/createAlert';
 
-async function handleUploadedVideo(file: File) {
-  const frames = await extractFramesFromVideo(file, 1000); // Capture frame every 1s
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 640;
-  canvas.height = 640;
-  const ctx = canvas.getContext('2d');
-
-  if (!ctx) {
-    console.error('Failed to get canvas context');
-    return;
-  }
-
-  let frameCount = 0;
-
-  for (const frame of frames) {
-    frameCount++;
-
-    // 1. Draw the frame onto the hidden canvas
-    ctx.putImageData(frame, 0, 0);
-
-    // 2. Run YOLO detection
-    const detections = await runYoloDetection(frame);
-    const filteredDetections = detections.filter(d => d.score > 0.5);
-
-    if (filteredDetections.length > 0) {
-      // 3. Capture canvas as Blob
-      const blob = await captureFrameAsBlob(canvas);
-
-      // 4. Upload frame image to backend
-      const filename = `frame-${Date.now()}-${frameCount}.png`;
-      const frameUrl = await uploadFrame(blob, filename);
-
-      // 5. For each detection, create an alert
-      for (const detection of filteredDetections) {
-        await createAlertFromDetection(detection, frameUrl);
-      }
-    }
-
-    // (Optional) delay between frames if needed
-    await new Promise(res => setTimeout(res, 1000));
-  }
-
-  alert('Video processing complete. Alerts have been created!');
-}
-
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -87,42 +41,69 @@ const MainPage = () => {
 
   const handleSearch = () => {
     console.log('Search triggered with:', searchQuery);
-    // You can add search logic here
+    // You can add search logic here later if needed
   };
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setVideoFile(file);
-      await handleUploadedVideo(file);
-      await fetchAlerts();
+      await processVideo(file);
+      await fetchAlerts();  // Refresh table after processing
     }
   };
 
+  const processVideo = async (file: File) => {
+    const frames = await extractFramesFromVideo(file, 1000); // every 1 second
 
-  const sendVideoToServer = async () => {
-    if (!videoFile) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 640;
+    const ctx = canvas.getContext('2d');
 
-    const formData = new FormData();
-    formData.append('video', videoFile);
-
-    try {
-      const response = await fetch('http://18.227.183.133:5000/upload', { // Updated endpoint to include 'upload'
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-      console.log('Server response:', data);
-      alert('Video uploaded successfully!');
-
-      fetchAlerts(); // Refresh alerts after upload
-    } catch (error) {
-      console.error('Error uploading video:', error);
-      alert('Upload failed!');
+    if (!ctx) {
+      console.error('Failed to get canvas context');
+      return;
     }
-  };
 
+    console.log('Canvas context obtained successfully.');
+    console.log(`Total frames extracted: ${frames.length}`);
+
+    let frameCount = 0;
+
+    for (const frame of frames) {
+      frameCount++;
+
+      ctx.putImageData(frame, 0, 0);
+
+      const detections = await runYoloDetection(frame);
+      console.log(`Frame ${frameCount}: Detections found:`, detections.length);
+
+      const filteredDetections = detections.filter(d => d.score > 0.5);
+      console.log(`Frame ${frameCount}: High-confidence detections:`, filteredDetections.length);
+
+      if (filteredDetections.length > 0) {
+        const blob = await captureFrameAsBlob(canvas);
+        console.log(`Frame ${frameCount}: Captured frame blob`);
+
+        const filename = `frame-${Date.now()}-${frameCount}.png`;
+        const frameUrl = await uploadFrame(blob, filename);
+        console.log(`Frame ${frameCount}: Uploaded frame to ${frameUrl}`);
+
+        for (const detection of filteredDetections) {
+          console.log(`Frame ${frameCount}: Creating alert for detection:`, detection.classId);
+          await createAlertFromDetection(detection, frameUrl);
+          console.log(`Frame ${frameCount}: Alert created.`);
+        }
+      } else {
+        console.log(`Frame ${frameCount}: No high-confidence detections, skipping alert.`);
+      }
+
+      await new Promise(res => setTimeout(res, 1000)); // Wait 1 second between frames
+    }
+
+    alert('Video processing complete.');
+  };
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -194,18 +175,9 @@ const MainPage = () => {
           onChange={handleUpload}
           style={{ display: 'block', marginBottom: 10 }}
         />
-        {videoFile && (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={sendVideoToServer}
-          >
-            Send to Server
-          </Button>
-        )}
       </Paper>
 
-      {/* Video Player Section */}
+      {/* Video Preview Section */}
       {videoFile && (
         <Paper style={{ padding: 20 }}>
           <Typography variant="h5" gutterBottom>Video Preview</Typography>
@@ -215,6 +187,7 @@ const MainPage = () => {
           </video>
         </Paper>
       )}
+
       {/* Alert Detail Dialog */}
       <AlertDetailDialog
         open={dialogOpen}
