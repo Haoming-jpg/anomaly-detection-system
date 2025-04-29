@@ -53,8 +53,8 @@ const MainPage = () => {
     }
   };
 
-  const processVideo = async (file: File) => {
-    const frames = await extractFramesFromVideo(file, 1000); // every 1 second
+  async function processVideo(file: File) {
+    const frames = await extractFramesFromVideo(file, 1000);
 
     const canvas = document.createElement('canvas');
     canvas.width = 640;
@@ -71,7 +71,10 @@ const MainPage = () => {
 
     let frameCount = 0;
 
-    for (const frame of frames) {
+    for (let i = 0; i < frames.length; i++) {
+      if (i % 2 !== 0) continue;  // Skip every 2nd frame for faster processing
+
+      const frame = frames[i];
       frameCount++;
 
       ctx.putImageData(frame, 0, 0);
@@ -99,11 +102,12 @@ const MainPage = () => {
         console.log(`Frame ${frameCount}: No high-confidence detections, skipping alert.`);
       }
 
-      await new Promise(res => setTimeout(res, 1000)); // Wait 1 second between frames
+      await new Promise(res => setTimeout(res, 100)); // Tiny delay to avoid locking browser
     }
 
     alert('Video processing complete.');
-  };
+  }
+
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>

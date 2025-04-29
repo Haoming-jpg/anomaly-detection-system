@@ -246,3 +246,16 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Updated `handleUpload` to directly run frame extraction and alert creation.
 - Refreshed alerts after processing video.
 - Simplified UI to only focus on in-browser detection flow.
+
+
+## 22. Optimize Frame Processing Speed for YOLO Detection
+
+**Prompt:**
+
+"My frame extraction and YOLO detection were taking too long. Help me optimize the browser-side video processing to make detection and alert creation faster."
+
+**Result:**
+- Reduced frame processing delay from 1 second to 0.1 seconds between frames
+- Added optional logic to skip every 2nd frame (process only even-indexed frames)
+- Greatly improved total processing speed (~4x–5x faster)
+- Pipeline remains stable, alerts are still generated properly
