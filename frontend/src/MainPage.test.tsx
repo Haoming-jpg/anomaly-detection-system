@@ -343,3 +343,23 @@ test('shows alert when clearing alerts fails', async () => {
     expect(window.alert).toHaveBeenCalledWith('Failed to clear alerts and frames.');
   });
 });
+
+test('search by type with empty query resets filtered alerts', async () => {
+  const mockAlerts = [
+    { id: 1, type: 'Error', message: 'Something bad happened', timestamp: '', frame_url: '' },
+    { id: 2, type: 'Warning', message: 'Something mild happened', timestamp: '', frame_url: '' },
+  ];
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const input = screen.getByLabelText(/Search.../i);
+  fireEvent.change(input, { target: { value: '   ' } }); // whitespace only
+  fireEvent.click(screen.getByText(/Search by Type/i));
+
+  // Expect all alerts to be shown (reset behavior)
+  expect(screen.getByText('Error')).toBeInTheDocument();
+  expect(screen.getByText('Warning')).toBeInTheDocument();
+});

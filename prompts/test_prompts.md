@@ -256,3 +256,16 @@ try {
   console.error('Error clearing all:', error);
   alert('Failed to clear alerts and frames.');
 }
+```
+
+## 12. Test search reset when query is empty in MainPage.tsx
+
+**Prompt:**
+
+We want to test the case when the search query is empty or whitespace, which should trigger a reset:
+
+```ts
+if (searchQuery.trim() === '') {
+  setFilteredAlerts(alerts); // Reset to all
+}
+```
