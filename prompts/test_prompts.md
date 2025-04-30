@@ -392,3 +392,18 @@ Write a Jest test for the /clear_all backend route that verifies the behavior wh
  - Confirmed the server responds with status 500 and { error: 'Failed to clear frames' }.
  - Ensures robust error handling when filesystem access fails during cleanup.
  - Test included in server.test.js.
+
+ ### 22. Test for POST /upload_frame with no file uploaded
+
+**Prompt:**
+
+Write a Jest + Supertest test for the `/upload_frame` endpoint in the backend API that covers the `if (!req.file)` logic:
+
+```js
+app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No frame uploaded.');
+  }
+  ...
+});
+```

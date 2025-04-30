@@ -117,3 +117,14 @@ describe('POST /clear_all (fs.readdir error)', () => {
     fs.readdir.mockRestore(); // clean up
   });
 });
+
+describe('POST /upload_frame (no file)', () => {
+  it('should return 400 if no file is uploaded', async () => {
+    const res = await request(app)
+      .post('/upload_frame')
+      .field('frame', ''); // simulate form with 'frame' field but no file
+
+    expect(res.statusCode).toBe(400);
+    expect(res.text).toBe('No frame uploaded.');
+  });
+});

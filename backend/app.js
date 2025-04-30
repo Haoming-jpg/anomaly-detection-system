@@ -66,7 +66,6 @@ app.get('/alerts', async (req, res) => {
 app.post('/clear_all', async (req, res) => {
   try {
     await db.query('DELETE FROM alerts');
-
     const framesPath = path.join(__dirname, 'frames');
     fs.readdir(framesPath, (err, files) => {
       if (err) {
@@ -79,14 +78,15 @@ app.post('/clear_all', async (req, res) => {
           if (err) console.error('Error deleting frame:', file, err);
         });
       }
-    });
 
-    res.status(200).json({ message: 'All alerts and frames cleared successfully!' });
+      res.status(200).json({ message: 'All alerts and frames cleared successfully!' });
+    });
   } catch (error) {
     console.error('Error clearing all:', error);
     res.status(500).json({ error: 'Failed to clear all' });
   }
 });
+
 
 app.use('/frames', express.static(path.join(__dirname, 'frames')));
 
