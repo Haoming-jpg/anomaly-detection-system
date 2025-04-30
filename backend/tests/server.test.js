@@ -68,3 +68,13 @@ describe('POST /alerts (error case)', () => {
     expect(res.body).toEqual({ error: 'Internal server error' });
   });
 });
+
+describe('GET /alerts (error case)', () => {
+  it('should return 500 if database fetch fails', async () => {
+    db.query.mockRejectedValueOnce(new Error('DB fetch failed'));
+    const res = await request(app).get('/alerts');
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({ error: 'Internal server error' });
+  });
+});

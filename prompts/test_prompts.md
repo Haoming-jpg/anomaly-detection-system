@@ -336,3 +336,24 @@ Write a Jest + Supertest test for the GET / route of the backend API. The test s
  beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {});
 });
+
+### 20. Test GET /alerts error handling
+
+**Prompt:**
+
+Write a Jest + Supertest test to cover the error-handling branch in the GET /alerts route.  
+The test should:
+
+- Mock `db.query` to throw an error
+- Send a request to `/alerts`
+- Assert the response status is 500
+- Confirm the response body is `{ error: 'Internal server error' }`
+
+This ensures the catch block is triggered and proper error feedback is returned to the client.
+
+**Result:**
+
+- Added a test under `GET /alerts (error case)` in `server.test.js`
+- Used `mockRejectedValueOnce` to simulate a database failure
+- Confirmed server returned 500 and the correct JSON payload
+- Improved coverage for error handling logic in the backend
