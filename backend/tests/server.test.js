@@ -4,7 +4,7 @@ const request = require('supertest');
 const app = require('../app'); // import Express app only
 const db = require('../db');
 const path = require('path');
-
+const fs = require('fs');
 
 beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -99,5 +99,21 @@ describe('POST /clear_all', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('message');
     expect(res.body.message).toMatch(/cleared successfully/i);
+  });
+});
+
+describe('POST /clear_all (fs.readdir error)', () => {
+  it('should return 500 if reading frames directory fails', async () => {
+    // mock fs.readdir to simulate error
+    jest.spyOn(fs, 'readdir').mockImplementation((dir, cb) => {
+      cb(new Error('Mocked read error'), null);
+    });
+
+    const res = await request(app).post('/clear_all');
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toEqual({ error: 'Failed to clear frames' });
+
+    fs.readdir.mockRestore(); // clean up
   });
 });

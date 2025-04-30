@@ -381,3 +381,14 @@ Write a Jest + Supertest test for the `/clear_all` route which deletes all alert
 - Created test that calls `POST /clear_all`
 - Verified it returns 200 and a success message
 - Ensures backend cleanup logic is test-covered
+
+### 21. /clear_all – Handle fs.readdir Failure
+
+**Prompt:**
+Write a Jest test for the /clear_all backend route that verifies the behavior when fs.readdir fails.
+
+**Result:**
+ - Added a test case that mocks fs.readdir to return an error.
+ - Confirmed the server responds with status 500 and { error: 'Failed to clear frames' }.
+ - Ensures robust error handling when filesystem access fails during cleanup.
+ - Test included in server.test.js.
