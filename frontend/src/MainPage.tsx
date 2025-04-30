@@ -96,53 +96,48 @@ const MainPage = () => {
     canvas.width = 640;
     canvas.height = 640;
     const ctx = canvas.getContext('2d');
-
     if (!ctx) {
       console.error('Failed to get canvas context');
       return;
     }
 
-    console.log('Canvas context obtained successfully.');
     console.log(`Total frames extracted: ${frames.length}`);
 
-    let frameCount = 0;
+    // Create tasks for every other frame
+    const detectionTasks = frames
+      .map((frame, i) => ({ frame, index: i }))
+      .filter(({ index }) => index % 2 === 0) // Skip odd-index frames
+      .map(({ frame, index }) => async () => {
+        ctx.putImageData(frame, 0, 0);
 
-    for (let i = 0; i < frames.length; i++) {
-      if (i % 2 !== 0) continue;  // Skip every 2nd frame for faster processing
+        const detections = await runYoloDetection(frame);
+        const filteredDetections = detections.filter(d => d.score > 0.5);
 
-      const frame = frames[i];
-      frameCount++;
+        if (filteredDetections.length > 0) {
+          const blob = await captureFrameAsBlob(canvas);
+          const filename = `frame-${Date.now()}-${index}.png`;
+          const frameUrl = await uploadFrame(blob, filename);
 
-      ctx.putImageData(frame, 0, 0);
+          for (const detection of filteredDetections) {
+            await createAlertFromDetection(detection, frameUrl);
+          }
 
-      const detections = await runYoloDetection(frame);
-      console.log(`Frame ${frameCount}: Detections found:`, detections.length);
-
-      const filteredDetections = detections.filter(d => d.score > 0.5);
-      console.log(`Frame ${frameCount}: High-confidence detections:`, filteredDetections.length);
-
-      if (filteredDetections.length > 0) {
-        const blob = await captureFrameAsBlob(canvas);
-        console.log(`Frame ${frameCount}: Captured frame blob`);
-
-        const filename = `frame-${Date.now()}-${frameCount}.png`;
-        const frameUrl = await uploadFrame(blob, filename);
-        console.log(`Frame ${frameCount}: Uploaded frame to ${frameUrl}`);
-
-        for (const detection of filteredDetections) {
-          console.log(`Frame ${frameCount}: Creating alert for detection:`, detection.classId);
-          await createAlertFromDetection(detection, frameUrl);
-          console.log(`Frame ${frameCount}: Alert created.`);
+          console.log(`Frame ${index}: Alerts created (${filteredDetections.length}).`);
+        } else {
+          console.log(`Frame ${index}: No high-confidence detections.`);
         }
-      } else {
-        console.log(`Frame ${frameCount}: No high-confidence detections, skipping alert.`);
-      }
+      });
 
-      await new Promise(res => setTimeout(res, 100)); // Tiny delay to avoid locking browser
+    // Run in parallel batches
+    const batchSize = 5;
+    for (let i = 0; i < detectionTasks.length; i += batchSize) {
+      const batch = detectionTasks.slice(i, i + batchSize).map(task => task());
+      await Promise.all(batch);
     }
 
     alert('Video processing complete.');
   }
+
 
   const indexOfLastAlert = currentPage * alertsPerPage;
   const indexOfFirstAlert = indexOfLastAlert - alertsPerPage;

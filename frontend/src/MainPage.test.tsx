@@ -48,6 +48,7 @@ beforeEach(() => {
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/fake-url');
   // Fully typed canvas.getContext mock that handles overload
+  window.alert = jest.fn();
   Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
     value: (contextId: string) => {
       if (contextId === '2d') {
@@ -243,33 +244,47 @@ test('searches by message and filters table', async () => {
 
 test('renders video preview and alert dialog when applicable', async () => {
   const mockAlerts = [
-    { id: 1, timestamp: '2023-01-01T00:00:00', type: 'Error', message: 'Test alert', frame_url: 'test.jpg' },
+    {
+      id: 1,
+      timestamp: '2023-01-01T00:00:00',
+      type: 'Error',
+      message: 'Test alert',
+      frame_url: 'test.jpg'
+    },
   ];
-  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  // Make sure GET /alerts resolves alerts AFTER upload too
+  mockedAxios.get.mockResolvedValue({ data: mockAlerts });
 
   render(<MainPage />);
 
-  // Simulate file upload for video preview
+  // Mock window.alert globally if not already done
+  window.alert = jest.fn();
+
+  // Simulate file upload
   const file = new File(['dummy content'], 'test.mp4', { type: 'video/mp4' });
   const fileInput = screen.getByTestId('video-upload');
   await act(async () => {
     fireEvent.change(fileInput, { target: { files: [file] } });
   });
 
+  // Confirm video preview rendered
   expect(screen.getByText(/Video Preview/i)).toBeInTheDocument();
 
-  // Click row to open dialog
-  await waitFor(() => screen.getByText('1'));
+  // Wait until row is visible
+  await waitFor(() => expect(screen.getByText('1')).toBeInTheDocument());
+
   const row = screen.getByRole('row', { name: /1/i });
   fireEvent.click(row);
 
+  // Wait for the dialog and its content
   await waitFor(() => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
     expect(within(dialog).getByText(/Test alert/i)).toBeInTheDocument();
   });
-
 });
+
 
 test('processVideo logic executes on upload with detections', async () => {
   const mockAlerts = [

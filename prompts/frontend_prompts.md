@@ -308,3 +308,21 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Added a `Reset` button to clear the search input and reload the full alert list
 - Search and reset operations reset pagination back to page 1
 - Pagination (100 alerts per page) still works after search and reset
+
+## 27. Speed Up YOLO Frame Processing with Parallelization
+
+**Prompt:**
+
+"My video-to-alert process is too slow. Help me make it faster by processing multiple frames in parallel using Promise.all and batching to avoid memory overload."
+
+**Result:**
+
+Refactored processVideo() to generate an array of async detection tasks
+
+Used Promise.all() to run each batch (size 5) of detection tasks concurrently
+
+Maintained alert creation, frame capture, and upload logic
+
+Achieved significantly faster processing for longer videos with large frame counts
+
+Logic still skips every 2nd frame for balance between speed and accuracy
