@@ -298,7 +298,7 @@ if (!ctx) {
 }
 ```
 
-### Test prompt for MainPage.lowConfidence.test.tsx
+### 15. Test prompt for MainPage.lowConfidence.test.tsx
 
 Write a test that verifies processVideo() logs "No high-confidence detections, skipping alert."
 when `runYoloDetection` returns only low-confidence detections.
@@ -309,7 +309,7 @@ Requirements:
 - Use a separate test file to avoid Jest hoisting issues
 - Use `console.log = jest.fn()` and assert it was called with the expected string
 
-## ✅ server.test.js - Testing Express backend
+## 17. server.test.js - Testing Express backend
 
 ### What was tested
 - GET `/alerts` returns a `200` status and an array of alerts
@@ -321,3 +321,7 @@ We moved the app logic to `app.js` and isolated `app.listen()` in `server.js` to
 ### Tools used
 - Jest
 - supertest
+
+### 18. POST /alerts endpoint test
+
+Write a Jest + Supertest test to verify the POST /alerts endpoint correctly stores a new alert. Use a valid alert object with timestamp, type, message, and frame_url. Expect a 201 response and verify the returned object contains the same fields. Ensure you mock any database side effects or clean up after the test.
