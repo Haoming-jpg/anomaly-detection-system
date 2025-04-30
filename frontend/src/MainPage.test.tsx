@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor, act, within } from '@testing-librar
 import '@testing-library/jest-dom';
 import MainPage from './MainPage';
 import axios from 'axios';
+import * as yoloModule from './utils/yoloDetection';
 
 (global as any).ImageData = class {
   width: number;
@@ -359,7 +360,6 @@ test('search by type with empty query resets filtered alerts', async () => {
   fireEvent.change(input, { target: { value: '   ' } }); // whitespace only
   fireEvent.click(screen.getByText(/Search by Type/i));
 
-  // Expect all alerts to be shown (reset behavior)
   expect(screen.getByText('Error')).toBeInTheDocument();
   expect(screen.getByText('Warning')).toBeInTheDocument();
 });

@@ -297,3 +297,14 @@ if (!ctx) {
   return;
 }
 ```
+
+### Test prompt for MainPage.lowConfidence.test.tsx
+
+Write a test that verifies processVideo() logs "No high-confidence detections, skipping alert."
+when `runYoloDetection` returns only low-confidence detections.
+
+Requirements:
+- Mock `runYoloDetection` to return detections with score < 0.5
+- Mock `extractFramesFromVideo`, `captureFrameAsBlob`, etc.
+- Use a separate test file to avoid Jest hoisting issues
+- Use `console.log = jest.fn()` and assert it was called with the expected string
