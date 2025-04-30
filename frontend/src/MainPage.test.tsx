@@ -2,7 +2,6 @@ import { render, screen, fireEvent, waitFor, act, within } from '@testing-librar
 import '@testing-library/jest-dom';
 import MainPage from './MainPage';
 import axios from 'axios';
-import * as yoloModule from './utils/yoloDetection';
 
 (global as any).ImageData = class {
   width: number;
