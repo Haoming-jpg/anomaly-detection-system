@@ -241,6 +241,7 @@ if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
 } else {
   alert('Invalid page number');
 }
+```
 
 ## 11. Test alert on clear_all failure in MainPage.tsx
 
@@ -300,6 +301,7 @@ if (!ctx) {
 
 ### 15. Test prompt for MainPage.lowConfidence.test.tsx
 
+**Prompt:**
 Write a test that verifies processVideo() logs "No high-confidence detections, skipping alert."
 when `runYoloDetection` returns only low-confidence detections.
 
@@ -309,19 +311,24 @@ Requirements:
 - Use a separate test file to avoid Jest hoisting issues
 - Use `console.log = jest.fn()` and assert it was called with the expected string
 
-## 17. server.test.js - Testing Express backend
+## 16. server.test.js - Testing Express backend
 
-### What was tested
+**Prompt:**
 - GET `/alerts` returns a `200` status and an array of alerts
 - Ensured DB pool (`db.end()`) is closed after tests to prevent Jest from hanging
 
-### Why we split server.js
-We moved the app logic to `app.js` and isolated `app.listen()` in `server.js` to prevent the Express server from being automatically started during test runs. This prevents Jest from hanging due to lingering listeners or ports.
+### 17. POST /alerts endpoint test
 
-### Tools used
-- Jest
-- supertest
-
-### 18. POST /alerts endpoint test
-
+**Prompt:**
 Write a Jest + Supertest test to verify the POST /alerts endpoint correctly stores a new alert. Use a valid alert object with timestamp, type, message, and frame_url. Expect a 201 response and verify the returned object contains the same fields. Ensure you mock any database side effects or clean up after the test.
+
+### 18. Test for GET / Root Route
+
+**Prompt:**
+Write a Jest + Supertest test for the GET / route of the backend API. The test should verify that the server responds with status 200 and the text 'Backend is running!'. Ensure this endpoint is covered for completeness and CI consistency.
+
+**Result:**
+ - Added a simple test to check the root endpoint (GET /)
+ - Verified the response status is 200 and the body is 'Backend is running!'
+ - Ensures base connectivity route is covered
+ - Confirmed test passes locally and in CI

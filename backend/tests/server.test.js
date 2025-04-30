@@ -11,12 +11,13 @@ describe('GET /alerts', () => {
   });
 });
 
-// Optional: clear alerts table before/after test
+// clear alerts table before/after test
 beforeAll(async () => {
   await db.query('DELETE FROM alerts');
 });
 
 afterAll(async () => {
+  await db.query('DELETE FROM alerts');
   await db.end(); // Close DB pool
 });
 
@@ -37,5 +38,13 @@ describe('POST /alerts', () => {
       message: newAlert.message,
       frame_url: newAlert.frame_url,
     });
+  });
+});
+
+describe('GET /', () => {
+  it('should return status 200 and success message', async () => {
+    const res = await request(app).get('/');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe('Backend is running!');
   });
 });
