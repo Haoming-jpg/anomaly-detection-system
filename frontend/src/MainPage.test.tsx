@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MainPage from './MainPage';
 import axios from 'axios';
@@ -13,6 +13,30 @@ beforeEach(() => {
 beforeEach(() => {
   mockedAxios.get.mockResolvedValue({ data: [] });
 });
+
+beforeAll(() => {
+  global.URL.createObjectURL = jest.fn(() => 'blob:http://localhost/fake-url');
+  // Fully typed canvas.getContext mock that handles overload
+  Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+    value: (contextId: string) => {
+      if (contextId === '2d') {
+        return {
+          drawImage: jest.fn(),
+          getImageData: jest.fn(() => ({
+            data: new Uint8ClampedArray(640 * 640 * 4),
+            width: 640,
+            height: 640,
+          })),
+          putImageData: jest.fn(),
+          clearRect: jest.fn(),
+          fillRect: jest.fn(),
+        } as unknown as CanvasRenderingContext2D;
+      }
+      return null;
+    },
+  });
+});
+
 
 test('renders Search Criteria heading', async () => {
   render(<MainPage />);
@@ -163,4 +187,56 @@ test('Reset button clears search input and restores alerts', async () => {
     expect(searchInput).toHaveValue('');
     expect(screen.queryByText('Test')).toBeInTheDocument();
   });
+});
+
+test('searches by message and filters table', async () => {
+  const mockAlerts = [
+    { id: 1, type: 'Error', message: 'Something went wrong' },
+    { id: 2, type: 'Info', message: 'System is OK' },
+  ];
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const searchInput = screen.getByLabelText(/Search.../i);
+  fireEvent.change(searchInput, { target: { value: 'wrong' } });
+  const searchByMessageBtn = screen.getByText(/Search by Message/i);
+  fireEvent.click(searchByMessageBtn);
+
+  await waitFor(() => {
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.queryByText('System is OK')).not.toBeInTheDocument();
+  });
+});
+
+test('renders video preview and alert dialog when applicable', async () => {
+  const mockAlerts = [
+    { id: 1, timestamp: '2023-01-01T00:00:00', type: 'Error', message: 'Test alert', frame_url: 'test.jpg' },
+  ];
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  // Simulate file upload for video preview
+  const file = new File(['dummy content'], 'test.mp4', { type: 'video/mp4' });
+  const fileInput = screen.getByTestId('video-upload');
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
+
+  expect(screen.getByText(/Video Preview/i)).toBeInTheDocument();
+
+  // Click row to open dialog
+  await waitFor(() => screen.getByText('1'));
+  const row = screen.getByRole('row', { name: /1/i });
+  fireEvent.click(row);
+
+  await waitFor(() => {
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText(/Test alert/i)).toBeInTheDocument();
+  });
+
 });

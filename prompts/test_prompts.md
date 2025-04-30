@@ -93,3 +93,29 @@ Tests should use React Testing Library and properly mock axios.
 - Used `jest.fn()` to mock `window.confirm` and `window.alert`
 - Used `Array.from()` to simulate multiple alerts for pagination
 - All tests passed with `npm run test` and contributed to increased code coverage
+
+## 4. MainPage.tsx - File Upload and Dialog Render Coverage
+
+**Prompt:**
+
+You are Roo, a Jest testing expert.  
+Help me add a test that covers the `videoFile` preview and `AlertDetailDialog` rendering in `MainPage.tsx`.  
+The test should:
+- Simulate a video file being uploaded via file input
+- Verify the "Video Preview" section is shown
+- Click a row in the alert table and verify the dialog opens
+- Avoid real video/canvas processing by mocking required APIs
+
+Ensure:
+- `extractFramesFromVideo` and `runYoloDetection` are mocked
+- `canvas.getContext` and `URL.createObjectURL` are mocked
+- Text queries scoped using `within(dialog)` to avoid duplicates
+
+**Result:**
+- Added a test `renders video preview and alert dialog when applicable` to `MainPage.test.tsx`
+- Used `data-testid="video-upload"` to locate the file input
+- Mocked canvas and object URL APIs with:
+  - `Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', ...)`
+  - `global.URL.createObjectURL = jest.fn(...)`
+- Used `within(dialog).getByText(...)` to resolve multiple matches in the DOM
+- Increased coverage of `MainPage.tsx` to 61.9% lines and 87.5% functions

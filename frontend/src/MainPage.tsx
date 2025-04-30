@@ -299,6 +299,7 @@ const MainPage = () => {
           type="file"
           accept="video/*"
           onChange={handleUpload}
+          data-testid="video-upload"
           style={{ display: 'block', marginBottom: 10 }}
         />
       </Paper>
