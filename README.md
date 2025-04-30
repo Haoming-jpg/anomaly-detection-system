@@ -11,7 +11,6 @@ This repository contains a full-stack application for detecting anomalies using 
 2. Install dependencies for both backend and frontend:
    ```bash
    cd anomaly-detection-system
-   npm install
    cd frontend
    npm install
    ```
