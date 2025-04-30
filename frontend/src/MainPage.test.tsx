@@ -375,3 +375,26 @@ test('logs error when fetching alerts fails', async () => {
     expect(console.error).toHaveBeenCalledWith('Error fetching alerts:', mockError);
   });
 });
+
+test('logs error if canvas context is null in processVideo', async () => {
+  // Setup: make getContext return null for this test
+  Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+    value: () => null
+  });
+
+  console.error = jest.fn(); // Spy on console
+
+  const mockAlerts = [{ id: 1, timestamp: '', type: 'Error', message: '', frame_url: '' }];
+  mockedAxios.get.mockResolvedValue({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  const file = new File(['dummy'], 'video.mp4', { type: 'video/mp4' });
+  const fileInput = screen.getByTestId('video-upload');
+
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
+
+  expect(console.error).toHaveBeenCalledWith('Failed to get canvas context');
+});

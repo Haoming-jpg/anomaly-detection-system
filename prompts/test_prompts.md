@@ -283,3 +283,17 @@ try {
   console.error('Error fetching alerts:', error);
 }
 ```
+
+## 14. Test canvas context null case in processVideo (MainPage.tsx)
+
+**Prompt:**
+
+In `processVideo`, we want to test the branch where canvas context retrieval fails:
+
+```ts
+const ctx = canvas.getContext('2d');
+if (!ctx) {
+  console.error('Failed to get canvas context');
+  return;
+}
+```
