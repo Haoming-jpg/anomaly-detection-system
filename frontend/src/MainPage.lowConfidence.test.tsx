@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 (global as any).ImageData = class {
@@ -52,9 +52,7 @@ test('logs when no high-confidence detections are found in a frame', async () =>
   const file = new File(['dummy'], 'test.mp4', { type: 'video/mp4' });
   const input = screen.getByTestId('video-upload');
 
-  await act(async () => {
-    fireEvent.change(input, { target: { files: [file] } });
-  });
+  fireEvent.change(input, { target: { files: [file] } });
 
   // Now check logs
   const found = (console.log as jest.Mock).mock.calls.some(call =>
