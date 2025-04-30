@@ -201,3 +201,30 @@ We needed to:
 - Added a test that simulates `loadedmetadata` and `seeked` to capture one frame and resolve successfully
 - Mocked DOM internals: `video.duration`, `getContext`, `createElement`, `drawImage`, and `getImageData`
 - Achieved full coverage for logical branches inside both exported functions
+
+## 9. Test processVideo logic in MainPage.tsx
+
+**Prompt:**
+
+We need to test the `processVideo(file: File)` logic inside `MainPage.tsx`, which:
+- Calls `extractFramesFromVideo`
+- Iterates over video frames
+- Runs `runYoloDetection` on each frame
+- Filters detections by score
+- Captures the frame via canvas
+- Uploads the frame
+- Calls `createAlertFromDetection`
+
+All of these helpers are in `src/utils`. We want to verify this flow is executed using mocks for all dependencies.
+
+**Result:**
+- Added a test that simulates a video upload through the file input
+- Mocked `extractFramesFromVideo` to return one `ImageData`
+- Mocked `runYoloDetection` to return one high-confidence detection
+- Mocked `captureFrameAsBlob` to return a `Blob`
+- Mocked `uploadFrame` to return a mock URL
+- Mocked `createAlertFromDetection` to be called with correct input
+- Used `jest.requireMock` to ensure mock references match those used inside the component
+- Added a global definition for `ImageData` to fix JSDOM environment error
+
+This test triggers the actual `processVideo()` logic and verifies the detection pipeline is fully executed.

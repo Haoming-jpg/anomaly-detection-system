@@ -3,6 +3,37 @@ import '@testing-library/jest-dom';
 import MainPage from './MainPage';
 import axios from 'axios';
 
+(global as any).ImageData = class {
+  width: number;
+  height: number;
+  data: Uint8ClampedArray;
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.data = new Uint8ClampedArray(width * height * 4);
+  }
+};
+
+jest.mock('./utils/yoloDetection', () => ({
+  extractFramesFromVideo: jest.fn(() => Promise.resolve([new ImageData(640, 640)])),
+  runYoloDetection: jest.fn(() =>
+    Promise.resolve([{ classId: 0, score: 0.95, bbox: [0, 0, 100, 100] }])
+  ),
+}));
+
+jest.mock('./utils/frameCapture', () => ({
+  captureFrameAsBlob: jest.fn(() => Promise.resolve(new Blob(['mock']))),
+}));
+
+jest.mock('./utils/uploadFrame', () => ({
+  uploadFrame: jest.fn(() => Promise.resolve('/frames/mock.png')),
+}));
+
+jest.mock('./utils/createAlert', () => ({
+  createAlertFromDetection: jest.fn(() => Promise.resolve()),
+}));
+
+
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 beforeEach(() => {
@@ -36,7 +67,6 @@ beforeAll(() => {
     },
   });
 });
-
 
 test('renders Search Criteria heading', async () => {
   render(<MainPage />);
@@ -240,3 +270,37 @@ test('renders video preview and alert dialog when applicable', async () => {
   });
 
 });
+
+test('processVideo logic executes on upload with detections', async () => {
+  const mockAlerts = [
+    { id: 1, timestamp: '2023-01-01T00:00:00', type: 'Error', message: 'Test alert', frame_url: 'test.jpg' },
+  ];
+  mockedAxios.get.mockResolvedValue({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  const file = new File(['dummy'], 'test.mp4', { type: 'video/mp4' });
+  const fileInput = screen.getByTestId('video-upload');
+
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
+
+  // 👇 dynamically grab the mocked modules from Jest's cache
+  const {
+    extractFramesFromVideo,
+    runYoloDetection
+  } = jest.requireMock('./utils/yoloDetection');
+
+  const { captureFrameAsBlob } = jest.requireMock('./utils/frameCapture');
+  const { uploadFrame } = jest.requireMock('./utils/uploadFrame');
+  const { createAlertFromDetection } = jest.requireMock('./utils/createAlert');
+
+  expect(extractFramesFromVideo).toHaveBeenCalledWith(file, 1000);
+  expect(runYoloDetection).toHaveBeenCalled();
+  expect(captureFrameAsBlob).toHaveBeenCalled();
+  expect(uploadFrame).toHaveBeenCalled();
+  expect(createAlertFromDetection).toHaveBeenCalled();
+});
+
+
