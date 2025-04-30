@@ -119,3 +119,27 @@ Ensure:
   - `global.URL.createObjectURL = jest.fn(...)`
 - Used `within(dialog).getByText(...)` to resolve multiple matches in the DOM
 - Increased coverage of `MainPage.tsx` to 61.9% lines and 87.5% functions
+
+## 5. Unit Test for createAlert.ts
+
+**Prompt:**
+
+You are Roo, a Jest testing expert.  
+Please help me write a unit test for the utility function `createAlertFromDetection(detection, frameUrl)` in `createAlert.ts`.  
+It sends a POST request to the backend (`/alerts`) using Axios and constructs an alert object based on detection results.
+
+The test should:
+- Mock `axios.post`
+- Pass a dummy detection object
+- Validate the constructed payload (frame_url, type, message, timestamp)
+- Allow the function to generate the timestamp internally
+- Use `expect.objectContaining` and `expect.any(String)` to handle dynamic values
+
+**Result:**
+- Created `createAlert.test.ts`
+- Covered 100% of `createAlert.ts`
+- Verified Axios POST call with:
+  - type = detection.classId
+  - message contains score
+  - frame_url is passed correctly
+  - timestamp is auto-generated
