@@ -179,3 +179,25 @@ The test should:
 - Passed `classId: 999` to trigger fallback
 - Verified both `type: 'object'` and correct confidence string
 - Achieved 100% branch and line coverage for `createAlert.ts`
+
+## 8. Tests for yoloDetection.ts - runYoloDetection and extractFramesFromVideo
+
+**Prompt:**
+
+Help write Jest tests to achieve 80%+ coverage in `yoloDetection.ts`. The file contains:
+- `runYoloDetection(image: ImageData)` which uses ONNX Web runtime and filters low-confidence detections.
+- `extractFramesFromVideo(file, frameInterval)` which uses video + canvas APIs to extract frames at timed intervals.
+
+We needed to:
+- Mock `InferenceSession.create` and `run` from `onnxruntime-web`
+- Mock `Tensor` creation
+- Simulate `video` tag events like `loadedmetadata` and `seeked`
+- Handle unsupported browser APIs in Jest like `URL.createObjectURL` and `revokeObjectURL`
+
+**Result:**
+- Added a test that verifies `runYoloDetection` returns only high-confidence detections
+- Mocked tensor input and output for YOLO postprocessing
+- Added a test for `extractFramesFromVideo()` where canvas context is missing (rejection path)
+- Added a test that simulates `loadedmetadata` and `seeked` to capture one frame and resolve successfully
+- Mocked DOM internals: `video.duration`, `getContext`, `createElement`, `drawImage`, and `getImageData`
+- Achieved full coverage for logical branches inside both exported functions
