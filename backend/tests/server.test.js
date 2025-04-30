@@ -92,3 +92,12 @@ describe('POST /upload_frame', () => {
     expect(res.body.frameUrl).toMatch(/\/frames\/frame-.*\.png/);
   });
 });
+
+describe('POST /clear_all', () => {
+  it('should return 200 after deleting alerts', async () => {
+    const res = await request(app).post('/clear_all');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message');
+    expect(res.body.message).toMatch(/cleared successfully/i);
+  });
+});

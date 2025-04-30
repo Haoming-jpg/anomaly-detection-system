@@ -371,3 +371,13 @@ app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
   res.json({ frameUrl: frameUrl });
 });
 ```
+
+### 20. Test for POST /clear_all route
+
+**Prompt:**
+Write a Jest + Supertest test for the `/clear_all` route which deletes all alerts and frames. Verify that the route returns status 200 and includes a success message in the response.
+
+**Result:**
+- Created test that calls `POST /clear_all`
+- Verified it returns 200 and a success message
+- Ensures backend cleanup logic is test-covered
