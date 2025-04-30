@@ -3,6 +3,8 @@ jest.mock('../db'); // Mock the db module
 const request = require('supertest');
 const app = require('../app'); // import Express app only
 const db = require('../db');
+const path = require('path');
+
 
 beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -76,5 +78,17 @@ describe('GET /alerts (error case)', () => {
 
     expect(res.statusCode).toBe(500);
     expect(res.body).toEqual({ error: 'Internal server error' });
+  });
+});
+
+describe('POST /upload_frame', () => {
+  it('should return 200 and frameUrl when a file is uploaded', async () => {
+    const res = await request(app)
+      .post('/upload_frame')
+      .attach('frame', path.resolve(__dirname, 'mock_data', 'test-image.png')); // make sure this file exists
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('frameUrl');
+    expect(res.body.frameUrl).toMatch(/\/frames\/frame-.*\.png/);
   });
 });

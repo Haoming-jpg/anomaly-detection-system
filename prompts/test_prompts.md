@@ -357,3 +357,17 @@ This ensures the catch block is triggered and proper error feedback is returned 
 - Used `mockRejectedValueOnce` to simulate a database failure
 - Confirmed server returned 500 and the correct JSON payload
 - Improved coverage for error handling logic in the backend
+
+### 21. Test for POST /upload_frame route
+
+Write a Jest + Supertest test that covers the following backend route:
+
+```js
+app.post('/upload_frame', uploadFrame.single('frame'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No frame uploaded.');
+  }
+  const frameUrl = '/frames/' + req.file.filename;
+  res.json({ frameUrl: frameUrl });
+});
+```
