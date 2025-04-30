@@ -332,3 +332,7 @@ Write a Jest + Supertest test for the GET / route of the backend API. The test s
  - Verified the response status is 200 and the body is 'Backend is running!'
  - Ensures base connectivity route is covered
  - Confirmed test passes locally and in CI
+
+ beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});

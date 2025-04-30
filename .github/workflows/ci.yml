@@ -35,14 +35,6 @@ jobs:
         working-directory: frontend
         run: npm test -- --watchAll=false
 
-      - name: Set backend environment variables
-        working-directory: backend
-        run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
 
       - name: Run backend tests
         working-directory: backend
