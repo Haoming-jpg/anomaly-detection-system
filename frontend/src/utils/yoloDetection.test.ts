@@ -95,6 +95,7 @@ it('extracts one frame after loadedmetadata and seeked events', async () => {
     width = 640;
     height = 640;
     data = new Uint8ClampedArray(640 * 640 * 4);
+    constructor() {}
   };
 
   const mockCtx = {

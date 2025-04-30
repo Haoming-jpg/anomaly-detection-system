@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MainPage from './MainPage';
 import axios from 'axios';
+import * as yoloModule from './utils/yoloDetection';
 
 (global as any).ImageData = class {
   width: number;
@@ -105,8 +106,10 @@ test('searches by type and filters table', async () => {
   const searchButton = screen.getByText(/Search by Type/i);
   fireEvent.click(searchButton);
 
-  await waitFor(() => expect(screen.queryByText('System warning')).not.toBeInTheDocument());
-  await screen.findByText('Critical error');
+  await waitFor(() => {
+    expect(screen.queryByText('System warning')).not.toBeInTheDocument();
+    expect(screen.getByText('Critical error')).toBeInTheDocument();
+  });
 });
 
 test('clicking table row opens dialog', async () => {
@@ -115,14 +118,16 @@ test('clicking table row opens dialog', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const row = screen.getByRole('row', { name: /1/i });
   fireEvent.click(row);
 
-  const dialog = screen.getByRole('dialog');
-  await waitFor(() => expect(dialog).toHaveTextContent('Test'));
-  await waitFor(() => expect(dialog).toHaveTextContent('Error'));
+  await waitFor(() => {
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveTextContent('Test');
+    expect(dialog).toHaveTextContent('Error');
+  });
 });
 
 test('clicking Clear All Alerts and Frames button calls axios.post and refreshes alerts', async () => {
@@ -137,8 +142,10 @@ test('clicking Clear All Alerts and Frames button calls axios.post and refreshes
   const clearButton = screen.getByText(/Clear All Alerts and Frames/i);
   fireEvent.click(clearButton);
 
-  await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all'));
-  await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled()); // relaxed this to allow multiple calls
+  await waitFor(() => {
+    expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all');
+    expect(mockedAxios.get).toHaveBeenCalled(); // relaxed this to allow multiple calls
+  });
 });
 
 
@@ -149,12 +156,12 @@ test('pagination Next button increments currentPage', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const nextButton = screen.getByText('Next');
   fireEvent.click(nextButton);
 
-  await screen.findByText('Page 2 of 2');
+  await waitFor(() => expect(screen.getByText('Page 2 of 2')).toBeInTheDocument());
 });
 
 test('pagination Previous button decrements currentPage', async () => {
@@ -163,16 +170,16 @@ test('pagination Previous button decrements currentPage', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const nextButton = screen.getByText('Next');
   fireEvent.click(nextButton);
-  await screen.findByText('Page 2 of 2');
+  await waitFor(() => screen.getByText('Page 2 of 2'));
 
   const prevButton = screen.getByText('Previous');
   fireEvent.click(prevButton);
 
-  await screen.findByText('Page 1 of 2');
+  await waitFor(() => expect(screen.getByText('Page 1 of 2')).toBeInTheDocument());
 });
 
 test('Go to page input sets currentPage correctly', async () => {
@@ -181,13 +188,13 @@ test('Go to page input sets currentPage correctly', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const pageInput = screen.getByLabelText(/Go to page/i);
   fireEvent.change(pageInput, { target: { value: '2' } });
   fireEvent.click(screen.getByText('Go'));
 
-  await screen.findByText('Page 2 of 2');
+  await waitFor(() => expect(screen.getByText('Page 2 of 2')).toBeInTheDocument());
 });
 
 test('Reset button clears search input and restores alerts', async () => {
@@ -196,19 +203,21 @@ test('Reset button clears search input and restores alerts', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const searchInput = screen.getByLabelText(/Search.../i);
   fireEvent.change(searchInput, { target: { value: 'Error' } });
   fireEvent.click(screen.getByText(/Search by Type/i));
 
-  await screen.findByText('Test');
+  await waitFor(() => expect(screen.queryByText('Test')).toBeInTheDocument());
 
   const resetButton = screen.getByText('Reset');
   fireEvent.click(resetButton);
 
-  await waitFor(() => expect(searchInput).toHaveValue(''));
-  await screen.findByText('Test');
+  await waitFor(() => {
+    expect(searchInput).toHaveValue('');
+    expect(screen.queryByText('Test')).toBeInTheDocument();
+  });
 });
 
 test('searches by message and filters table', async () => {
@@ -220,15 +229,17 @@ test('searches by message and filters table', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const searchInput = screen.getByLabelText(/Search.../i);
   fireEvent.change(searchInput, { target: { value: 'wrong' } });
   const searchByMessageBtn = screen.getByText(/Search by Message/i);
   fireEvent.click(searchByMessageBtn);
 
-  await screen.findByText('Something went wrong');
-  await waitFor(() => expect(screen.queryByText('System is OK')).not.toBeInTheDocument());
+  await waitFor(() => {
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.queryByText('System is OK')).not.toBeInTheDocument();
+  });
 });
 
 test('renders video preview and alert dialog when applicable', async () => {
@@ -242,18 +253,22 @@ test('renders video preview and alert dialog when applicable', async () => {
   // Simulate file upload for video preview
   const file = new File(['dummy content'], 'test.mp4', { type: 'video/mp4' });
   const fileInput = screen.getByTestId('video-upload');
-  fireEvent.change(fileInput, { target: { files: [file] } });
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
 
   expect(screen.getByText(/Video Preview/i)).toBeInTheDocument();
 
   // Click row to open dialog
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
   const row = screen.getByRole('row', { name: /1/i });
   fireEvent.click(row);
 
-  const dialog = screen.getByRole('dialog');
-  await waitFor(() => expect(dialog).toBeInTheDocument());
-  await waitFor(() => expect(within(dialog).getByText(/Test alert/i)).toBeInTheDocument());
+  await waitFor(() => {
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText(/Test alert/i)).toBeInTheDocument();
+  });
 
 });
 
@@ -268,8 +283,9 @@ test('processVideo logic executes on upload with detections', async () => {
   const file = new File(['dummy'], 'test.mp4', { type: 'video/mp4' });
   const fileInput = screen.getByTestId('video-upload');
 
-  fireEvent.change(fileInput, { target: { files: [file] } });
-
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
 
   // 👇 dynamically grab the mocked modules from Jest's cache
   const {
@@ -301,7 +317,7 @@ test('shows alert on invalid page input', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const pageInput = screen.getByLabelText(/Go to page/i);
   fireEvent.change(pageInput, { target: { value: '999' } }); // invalid: exceeds total pages
@@ -323,8 +339,10 @@ test('shows alert when clearing alerts fails', async () => {
   const clearButton = screen.getByText(/Clear All Alerts and Frames/i);
   fireEvent.click(clearButton);
 
-  await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all'));
-  await waitFor(() => expect(window.alert).toHaveBeenCalledWith('Failed to clear alerts and frames.'));
+  await waitFor(() => {
+    expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all');
+    expect(window.alert).toHaveBeenCalledWith('Failed to clear alerts and frames.');
+  });
 });
 
 test('search by type with empty query resets filtered alerts', async () => {
@@ -336,7 +354,7 @@ test('search by type with empty query resets filtered alerts', async () => {
 
   render(<MainPage />);
 
-  await screen.findByText('1');
+  await waitFor(() => screen.getByText('1'));
 
   const input = screen.getByLabelText(/Search.../i);
   fireEvent.change(input, { target: { value: '   ' } }); // whitespace only
@@ -374,7 +392,9 @@ test('logs error if canvas context is null in processVideo', async () => {
   const file = new File(['dummy'], 'video.mp4', { type: 'video/mp4' });
   const fileInput = screen.getByTestId('video-upload');
 
-  fireEvent.change(fileInput, { target: { files: [file] } });
+  await act(async () => {
+    fireEvent.change(fileInput, { target: { files: [file] } });
+  });
 
   expect(console.error).toHaveBeenCalledWith('Failed to get canvas context');
 });
