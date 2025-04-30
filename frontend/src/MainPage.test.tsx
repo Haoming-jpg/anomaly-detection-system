@@ -363,3 +363,15 @@ test('search by type with empty query resets filtered alerts', async () => {
   expect(screen.getByText('Error')).toBeInTheDocument();
   expect(screen.getByText('Warning')).toBeInTheDocument();
 });
+
+test('logs error when fetching alerts fails', async () => {
+  const mockError = new Error('Network down');
+  mockedAxios.get.mockRejectedValueOnce(mockError);
+  console.error = jest.fn(); // silence console + spy
+
+  render(<MainPage />);
+
+  await waitFor(() => {
+    expect(console.error).toHaveBeenCalledWith('Error fetching alerts:', mockError);
+  });
+});

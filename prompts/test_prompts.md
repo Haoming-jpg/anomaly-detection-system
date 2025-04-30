@@ -269,3 +269,17 @@ if (searchQuery.trim() === '') {
   setFilteredAlerts(alerts); // Reset to all
 }
 ```
+## 13. Test fetchAlerts error handling in MainPage.tsx
+
+**Prompt:**
+
+We want to cover the `catch` block in the `fetchAlerts()` function, which logs an error when the network call fails:
+
+```ts
+try {
+  const response = await axios.get('...');
+  setAlerts(response.data);
+} catch (error) {
+  console.error('Error fetching alerts:', error);
+}
+```
