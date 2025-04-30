@@ -35,7 +35,10 @@ jobs:
         working-directory: frontend
         run: npm test -- --watchAll=false
 
-
+      - name: Create frames directory for backend tests
+        working-directory: backend
+        run: mkdir -p frames && echo "test" > frames/test.txt
+      
       - name: Run backend tests
         working-directory: backend
         run: npm test -- --watchAll=false
