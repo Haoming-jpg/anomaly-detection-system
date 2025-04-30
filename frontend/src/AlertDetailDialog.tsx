@@ -39,7 +39,13 @@ const AlertDetailDialog: React.FC<AlertDetailDialogProps> = ({ open, onClose, al
         <Typography gutterBottom><strong>Type:</strong> {alert.type}</Typography>
         <Typography gutterBottom><strong>Message:</strong> {alert.message}</Typography>
         <Typography gutterBottom><strong>Supporting Frame:</strong></Typography>
-        <img src={alert.frameUrl} alt="Supporting Frame" style={{ width: '100%', marginTop: 10 }} />
+        {alert?.frameUrl && (
+          <img
+            src={`http://3.145.95.9:5000${alert.frameUrl}`}
+            alt="Supporting Frame"
+            style={{ width: '100%', marginTop: 20 }}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

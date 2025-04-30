@@ -246,3 +246,65 @@ Only allow uploading a video to browser, extracting frames, running YOLO detecti
 - Updated `handleUpload` to directly run frame extraction and alert creation.
 - Refreshed alerts after processing video.
 - Simplified UI to only focus on in-browser detection flow.
+
+
+## 22. Optimize Frame Processing Speed for YOLO Detection
+
+**Prompt:**
+
+"My frame extraction and YOLO detection were taking too long. Help me optimize the browser-side video processing to make detection and alert creation faster."
+
+**Result:**
+- Reduced frame processing delay from 1 second to 0.1 seconds between frames
+- Added optional logic to skip every 2nd frame (process only even-indexed frames)
+- Greatly improved total processing speed (~4x–5x faster)
+- Pipeline remains stable, alerts are still generated properly
+
+## 23. Add Manual Page Jump for Pagination
+
+**Prompt:**
+
+"I want to allow users to input a page number and directly jump to that page when browsing the alert list. Help me add a TextField input and Go button for manual page navigation."
+
+**Result:**
+- Added `pageInput` state to track user input
+- Added a `<TextField>` and a `<Button>` next to Previous/Next buttons
+- Clicking Go checks input validity and updates `currentPage`
+- User can now quickly jump to any page directly
+
+## 24. Add Clear All Button in Frontend to Trigger Backend Reset
+
+**Prompt:**
+
+"I want to add a Clear All button in my frontend MainPage. When clicked, it should send a POST request to the backend /clear_all endpoint, and refresh the alert table after clearing."
+
+**Result:**
+- Added `Clear All Alerts and Frames` button
+- Confirmed user action with a popup (`window.confirm`)
+- Called backend POST `/clear_all` to perform full reset
+- Refreshed alert table after successful clearing
+
+## 25. Display Supporting Frame Image in Alert Detail Dialog
+
+**Prompt:**
+
+"I want users to see the frame image associated with each alert when they open the AlertDetailDialog. Help me display the uploaded supporting frame image properly inside the dialog."
+
+**Result:**
+- Passed `frameUrl` into `AlertDetailDialog`
+- Built full absolute URL to the backend server (`http://3.145.95.9:5000/frames/xxx.png`)
+- Rendered the frame image using an `<img>` tag inside the dialog
+- Ensured images load correctly and are styled to fit the dialog
+
+## 26. Implement Search and Reset Functionality for Alert List
+
+**Prompt:**
+
+"I want to add full search functionality to my alert list. I need two buttons: one for searching alerts by type, one for searching by message. If the input is empty, the search should reset to show all alerts. I also want a Reset button to clear the search and reload all alerts."
+
+**Result:**
+- Added `Search by Type` button to filter alerts based on the `type` field
+- Added `Search by Message` button to filter alerts based on the `message` field
+- Added a `Reset` button to clear the search input and reload the full alert list
+- Search and reset operations reset pagination back to page 1
+- Pagination (100 alerts per page) still works after search and reset

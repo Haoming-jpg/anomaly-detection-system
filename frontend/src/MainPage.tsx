@@ -7,6 +7,7 @@ import { uploadFrame } from './utils/uploadFrame';
 import { captureFrameAsBlob } from './utils/frameCapture';
 import { createAlertFromDetection } from './utils/createAlert';
 
+
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -25,11 +26,22 @@ const MainPage = () => {
     frame_url: string;
   }>>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const alertsPerPage = 50;
+  const [pageInput, setPageInput] = useState('');
+  const [filteredAlerts, setFilteredAlerts] = useState<Array<{
+    id: number;
+    timestamp: string;
+    type: string;
+    message: string;
+    frame_url: string;
+  }>>([]);
 
   const fetchAlerts = async () => {
     try {
       const response = await axios.get('http://3.145.95.9:5000/alerts');
       setAlerts(response.data);
+      setFilteredAlerts(response.data);
     } catch (error) {
       console.error('Error fetching alerts:', error);
     }
@@ -39,10 +51,28 @@ const MainPage = () => {
     fetchAlerts();
   }, []);
 
-  const handleSearch = () => {
-    console.log('Search triggered with:', searchQuery);
-    // You can add search logic here later if needed
+  const handleSearchByType = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredAlerts(alerts); // Reset to all
+    } else {
+      setFilteredAlerts(alerts.filter(alert =>
+        alert.type.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    }
+    setCurrentPage(1);
   };
+
+  const handleSearchByMessage = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredAlerts(alerts); // Reset to all
+    } else {
+      setFilteredAlerts(alerts.filter(alert =>
+        alert.message.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    }
+    setCurrentPage(1);
+  };
+
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -53,8 +83,14 @@ const MainPage = () => {
     }
   };
 
-  const processVideo = async (file: File) => {
-    const frames = await extractFramesFromVideo(file, 1000); // every 1 second
+  const handleResetSearch = () => {
+    setSearchQuery('');
+    setFilteredAlerts(alerts);
+    setCurrentPage(1);
+  };
+
+  async function processVideo(file: File) {
+    const frames = await extractFramesFromVideo(file, 1000);
 
     const canvas = document.createElement('canvas');
     canvas.width = 640;
@@ -71,7 +107,10 @@ const MainPage = () => {
 
     let frameCount = 0;
 
-    for (const frame of frames) {
+    for (let i = 0; i < frames.length; i++) {
+      if (i % 2 !== 0) continue;  // Skip every 2nd frame for faster processing
+
+      const frame = frames[i];
       frameCount++;
 
       ctx.putImageData(frame, 0, 0);
@@ -99,11 +138,16 @@ const MainPage = () => {
         console.log(`Frame ${frameCount}: No high-confidence detections, skipping alert.`);
       }
 
-      await new Promise(res => setTimeout(res, 1000)); // Wait 1 second between frames
+      await new Promise(res => setTimeout(res, 100)); // Tiny delay to avoid locking browser
     }
 
     alert('Video processing complete.');
-  };
+  }
+
+  const indexOfLastAlert = currentPage * alertsPerPage;
+  const indexOfFirstAlert = indexOfLastAlert - alertsPerPage;
+  const currentAlerts = filteredAlerts.slice(indexOfFirstAlert, indexOfLastAlert);
+  const totalPages = Math.ceil(filteredAlerts.length / alertsPerPage);
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -120,11 +164,28 @@ const MainPage = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSearch}
+          onClick={handleSearchByType}
+          style={{ marginTop: 10, marginRight: 10 }}
+        >
+          Search by Type
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSearchByMessage}
           style={{ marginTop: 10 }}
         >
-          Search
+          Search by Message
         </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleResetSearch}
+          style={{ marginTop: 10, marginLeft: 10 }}
+        >
+          Reset
+        </Button>
+
       </Paper>
 
       {/* Results Table Section */}
@@ -140,7 +201,7 @@ const MainPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {alerts.map((alert) => (
+            {currentAlerts.map((alert) => (
               <TableRow
                 key={alert.id}
                 hover
@@ -164,15 +225,81 @@ const MainPage = () => {
             ))}
           </TableBody>
         </Table>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+          <Button
+            variant="contained"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            style={{ marginRight: 10 }}
+          >
+            Previous
+          </Button>
+          <Typography variant="body1" style={{ margin: '0 10px' }}>
+            Page {currentPage} of {totalPages}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            style={{ marginLeft: 10 }}
+          >
+            Next
+          </Button>
+          <div style={{ marginLeft: 20, display: 'flex', alignItems: 'center' }}>
+            <TextField
+              label="Go to page"
+              variant="outlined"
+              size="small"
+              value={pageInput}
+              onChange={(e) => setPageInput(e.target.value)}
+              style={{ width: 100, marginRight: 10 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => {
+                const pageNumber = Number(pageInput);
+                if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+                  setCurrentPage(pageNumber);
+                } else {
+                  alert('Invalid page number');
+                }
+              }}
+            >
+              Go
+            </Button>
+          </div>
+        </div>
+
       </Paper>
 
       {/* Upload Video Section */}
       <Paper style={{ padding: 20 }}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={async () => {
+            if (window.confirm('Are you sure you want to delete all alerts and frames? This action cannot be undone.')) {
+              try {
+                await axios.post('http://3.145.95.9:5000/clear_all');
+                alert('All alerts and frames cleared!');
+                fetchAlerts(); // Refresh table
+              } catch (error) {
+                console.error('Error clearing all:', error);
+                alert('Failed to clear alerts and frames.');
+              }
+            }
+          }}
+          style={{ marginTop: 10 }}
+        >
+          Clear All Alerts and Frames
+        </Button>
+
         <Typography variant="h5" gutterBottom>Upload Video</Typography>
         <input
           type="file"
           accept="video/*"
           onChange={handleUpload}
+          data-testid="video-upload"
           style={{ display: 'block', marginBottom: 10 }}
         />
       </Paper>
