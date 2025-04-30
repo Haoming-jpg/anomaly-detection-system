@@ -82,11 +82,21 @@ describe('GET /alerts (error case)', () => {
 });
 
 describe('POST /upload_frame', () => {
+  const tempImagePath = path.join(__dirname, 'temp-upload.png');
+
+  beforeAll(() => {
+    fs.writeFileSync(tempImagePath, Buffer.from([0x89, 0x50, 0x4E, 0x47])); // PNG header
+  });
+  
+  afterAll(() => {
+    fs.unlinkSync(tempImagePath);
+  });
+  
   it('should return 200 and frameUrl when a file is uploaded', async () => {
     const res = await request(app)
       .post('/upload_frame')
-      .attach('frame', path.resolve(__dirname, 'mock_data', 'test-image.png')); // make sure this file exists
-
+      .attach('frame', tempImagePath);
+  
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('frameUrl');
     expect(res.body.frameUrl).toMatch(/\/frames\/frame-.*\.png/);
