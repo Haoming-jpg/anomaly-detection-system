@@ -143,3 +143,21 @@ The test should:
   - message contains score
   - frame_url is passed correctly
   - timestamp is auto-generated
+
+## 6. Unit Test for frameCapture.ts
+
+**Prompt:**
+
+You are Roo, a Jest testing expert.  
+Help me write tests for `captureFrameAsBlob(canvas)` in `frameCapture.ts`.  
+This function wraps `canvas.toBlob()` in a promise and either resolves with the blob or rejects if null.
+
+The test should:
+- Create a mock canvas with a working `toBlob` that resolves with a blob
+- Create a second test where `toBlob` returns `null` and the function rejects with an error
+
+**Result:**
+- Created `frameCapture.test.ts`
+- Covered both branches of the `if (blob) ... else ...` logic
+- Asserted that rejection throws: `Canvas conversion to blob failed.`
+- Achieved 100% branch and line coverage for `frameCapture.ts`
