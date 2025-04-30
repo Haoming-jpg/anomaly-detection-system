@@ -326,3 +326,20 @@ test('shows alert on invalid page input', async () => {
 });
 
 
+test('shows alert when clearing alerts fails', async () => {
+  window.confirm = jest.fn(() => true);
+  window.alert = jest.fn();
+  console.error = jest.fn(); // Suppress test console output
+
+  mockedAxios.post.mockRejectedValueOnce(new Error('Server error'));
+
+  render(<MainPage />);
+
+  const clearButton = screen.getByText(/Clear All Alerts and Frames/i);
+  fireEvent.click(clearButton);
+
+  await waitFor(() => {
+    expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all');
+    expect(window.alert).toHaveBeenCalledWith('Failed to clear alerts and frames.');
+  });
+});

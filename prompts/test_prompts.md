@@ -241,3 +241,18 @@ if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
 } else {
   alert('Invalid page number');
 }
+
+## 11. Test alert on clear_all failure in MainPage.tsx
+
+**Prompt:**
+
+We want to cover the `catch` block of the `axios.post('/clear_all')` call in `MainPage.tsx`, which displays an alert on failure:
+
+```ts
+try {
+  await axios.post('...');
+  alert('All alerts and frames cleared!');
+} catch (error) {
+  console.error('Error clearing all:', error);
+  alert('Failed to clear alerts and frames.');
+}
