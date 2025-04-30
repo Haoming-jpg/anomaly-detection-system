@@ -98,7 +98,6 @@ Tests should use React Testing Library and properly mock axios.
 
 **Prompt:**
 
-You are Roo, a Jest testing expert.  
 Help me add a test that covers the `videoFile` preview and `AlertDetailDialog` rendering in `MainPage.tsx`.  
 The test should:
 - Simulate a video file being uploaded via file input
@@ -124,7 +123,6 @@ Ensure:
 
 **Prompt:**
 
-You are Roo, a Jest testing expert.  
 Please help me write a unit test for the utility function `createAlertFromDetection(detection, frameUrl)` in `createAlert.ts`.  
 It sends a POST request to the backend (`/alerts`) using Axios and constructs an alert object based on detection results.
 
@@ -148,7 +146,6 @@ The test should:
 
 **Prompt:**
 
-You are Roo, a Jest testing expert.  
 Help me write tests for `captureFrameAsBlob(canvas)` in `frameCapture.ts`.  
 This function wraps `canvas.toBlob()` in a promise and either resolves with the blob or rejects if null.
 
@@ -165,8 +162,7 @@ The test should:
 ## 7. Full Coverage for createAlert.ts with Fallback Handling
 
 **Prompt:**
-
-You are Roo, a Jest testing expert.  
+ 
 Help me write a second test for `createAlertFromDetection(detection, frameUrl)` in `createAlert.ts` to cover the fallback case.  
 The function uses:
   type: classNames[detection.classId] || 'object'
