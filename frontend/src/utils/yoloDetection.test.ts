@@ -13,7 +13,7 @@ jest.mock('onnxruntime-web', () => {
   return {
     InferenceSession: {
       create: jest.fn(() => Promise.resolve({
-        inputNames: ['input'], // ✅ mock input name
+        inputNames: ['input'], //mock input name
         run: jest.fn(() => Promise.resolve({
           output: {
             data: new Float32Array([
