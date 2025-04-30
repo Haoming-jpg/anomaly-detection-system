@@ -303,4 +303,26 @@ test('processVideo logic executes on upload with detections', async () => {
   expect(createAlertFromDetection).toHaveBeenCalled();
 });
 
+test('shows alert on invalid page input', async () => {
+  window.alert = jest.fn();
+  const mockAlerts = Array.from({ length: 50 }, (_, i) => ({
+    id: i + 1,
+    timestamp: '2023-01-01T00:00:00',
+    type: 'Error',
+    message: 'Test alert',
+    frame_url: 'test.jpg'
+  }));
+  mockedAxios.get.mockResolvedValueOnce({ data: mockAlerts });
+
+  render(<MainPage />);
+
+  await waitFor(() => screen.getByText('1'));
+
+  const pageInput = screen.getByLabelText(/Go to page/i);
+  fireEvent.change(pageInput, { target: { value: '999' } }); // invalid: exceeds total pages
+  fireEvent.click(screen.getByText('Go'));
+
+  expect(window.alert).toHaveBeenCalledWith('Invalid page number');
+});
+
 

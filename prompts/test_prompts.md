@@ -228,3 +228,16 @@ All of these helpers are in `src/utils`. We want to verify this flow is executed
 - Added a global definition for `ImageData` to fix JSDOM environment error
 
 This test triggers the actual `processVideo()` logic and verifies the detection pipeline is fully executed.
+
+## 10. Test invalid page number alert in MainPage.tsx
+
+**Prompt:**
+
+We want to cover the `else` branch in the "Go to page" handler in `MainPage.tsx`, which alerts the user if the input page number is invalid. The logic looks like:
+
+```ts
+if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+  setCurrentPage(pageNumber);
+} else {
+  alert('Invalid page number');
+}
