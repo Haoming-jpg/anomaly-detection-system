@@ -150,7 +150,7 @@ export async function extractFramesFromVideo(file: File, frameInterval = 1000): 
       captureFrame();
     });
 
-    video.addEventListener('error', (e) => {
+    video.addEventListener('error', () => {
       reject(new Error('Failed to load video'));
     });
   });
