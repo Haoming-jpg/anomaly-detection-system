@@ -161,3 +161,25 @@ The test should:
 - Covered both branches of the `if (blob) ... else ...` logic
 - Asserted that rejection throws: `Canvas conversion to blob failed.`
 - Achieved 100% branch and line coverage for `frameCapture.ts`
+
+## 7. Full Coverage for createAlert.ts with Fallback Handling
+
+**Prompt:**
+
+You are Roo, a Jest testing expert.  
+Help me write a second test for `createAlertFromDetection(detection, frameUrl)` in `createAlert.ts` to cover the fallback case.  
+The function uses:
+  type: classNames[detection.classId] || 'object'
+  message: `Detected a ${...} with ${...}% confidence`
+
+The test should:
+- Use an invalid classId (e.g., 999)
+- Confirm that type falls back to "object"
+- Confirm that message still formats correctly
+- Use expect.objectContaining for partial match
+
+**Result:**
+- Added a second test to `createAlert.test.ts`
+- Passed `classId: 999` to trigger fallback
+- Verified both `type: 'object'` and correct confidence string
+- Achieved 100% branch and line coverage for `createAlert.ts`
