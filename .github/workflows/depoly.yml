@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - develop
 
 jobs:
   deploy:
@@ -22,7 +21,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/anomaly-detection-system/backend
-          git pull origin develop
+          git pull origin main
           npm install
           npm test
           pm2 restart server
