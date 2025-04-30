@@ -308,3 +308,16 @@ Requirements:
 - Mock `extractFramesFromVideo`, `captureFrameAsBlob`, etc.
 - Use a separate test file to avoid Jest hoisting issues
 - Use `console.log = jest.fn()` and assert it was called with the expected string
+
+## ✅ server.test.js - Testing Express backend
+
+### What was tested
+- GET `/alerts` returns a `200` status and an array of alerts
+- Ensured DB pool (`db.end()`) is closed after tests to prevent Jest from hanging
+
+### Why we split server.js
+We moved the app logic to `app.js` and isolated `app.listen()` in `server.js` to prevent the Express server from being automatically started during test runs. This prevents Jest from hanging due to lingering listeners or ports.
+
+### Tools used
+- Jest
+- supertest
