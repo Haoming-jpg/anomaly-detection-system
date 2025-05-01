@@ -70,18 +70,25 @@ export function postprocessOutput(output: Record<string, ort.Tensor>, scoreThres
     const width = data[offset + 2];
     const height = data[offset + 3];
 
-    let maxClassScore = -Infinity;
-    let classId = -1;
+    const classScores = data.slice(offset + 4, offset + 4 + numClasses);
 
+    // Softmax function
+    const expScores = classScores.map(s => Math.exp(s));
+    const sumExp = expScores.reduce((a, b) => a + b, 0);
+    const softmaxScores = expScores.map(s => s / sumExp);
+    
+    let maxScore = -Infinity;
+    let classId = -1;
+    
     for (let c = 0; c < numClasses; c++) {
-      const classScore = data[offset + 4 + c];
-      if (classScore > maxClassScore) {
-        maxClassScore = classScore;
+      if (softmaxScores[c] > maxScore) {
+        maxScore = softmaxScores[c];
         classId = c;
       }
     }
+    
 
-    if (maxClassScore > scoreThreshold) {
+    if (maxScore  > scoreThreshold) {
       const xMin = (xCenter - width / 2) * 640;
       const yMin = (yCenter - height / 2) * 640;
       const w = width * 640;
@@ -89,7 +96,7 @@ export function postprocessOutput(output: Record<string, ort.Tensor>, scoreThres
 
       results.push({
         bbox: [xMin, yMin, w, h],
-        score: maxClassScore,
+        score: maxScore,
         classId: classId,
       });
     }

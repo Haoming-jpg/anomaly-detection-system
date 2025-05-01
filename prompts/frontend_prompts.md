@@ -326,3 +326,31 @@ Maintained alert creation, frame capture, and upload logic
 Achieved significantly faster processing for longer videos with large frame counts
 
 Logic still skips every 2nd frame for balance between speed and accuracy
+
+## 28. Fix Exaggerated YOLO Confidence in Alerts
+
+**Prompt:**
+
+"My alert messages show absurd confidence values like 'Detected a handbag with 39938.1% confidence'. Help me debug why this happens and fix it."
+
+**Problem:**
+
+- Alert messages included detection scores like `39938.1%`, far beyond the expected 0–100% range.
+- The frontend `createAlertFromDetection()` correctly formatted confidence as `(score * 100).toFixed(1)%`, assuming `score` was between 0 and 1.
+- However, the actual `score` values came from the YOLO ONNX model’s raw logits.
+
+**Diagnosis (LLM-aided):**
+
+- The raw model outputs contain **logits**, not probabilities.
+- The `postprocessOutput()` function directly used the **maximum raw class score** without applying softmax.
+- These raw scores can be >>1, causing percentage inflation.
+
+**Fix:**
+
+- Applied a **softmax transformation** to the class logits to convert them to normalized probabilities.
+- Replaced direct `Math.max(logit)` usage with softmax-based class probability and filtered detections using this value.
+
+**Result:**
+
+- Alert confidence values are now human-readable and correct (e.g., `99.7%`).
+- Downstream UI no longer displays misleading or mathematically invalid confidence messages.
