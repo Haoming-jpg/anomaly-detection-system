@@ -13,16 +13,13 @@ This repository contains a full-stack application for detecting anomalies using 
    cd anomaly-detection-system
    cd frontend
    npm install
+   cd ../backend
+   npm install
    ```
 
 ## Running the Application
-1. **Backend**: The backend server is hosted on **http://3.145.95.9:5000/** and is automatically managed by ES2. No manual startup is required.
-2. **Frontend**: Start the frontend application:
-   ```bash
-   cd frontend
-   npm start
-   ```
-   The frontend will be available at `http://localhost:3000`.
+1. **Backend**: Hosted on **http://3.145.95.9:5000/** and managed by ES2.
+2. **Frontend**: Deployed at **http://anomaly-frontend-prod.s3-website.us-east-2.amazonaws.com**.
 
 ## Key Features
 - **Anomaly Detection**: Uses YOLOv8 for real-time object detection.
