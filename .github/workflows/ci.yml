@@ -35,6 +35,15 @@ jobs:
         working-directory: frontend
         run: npm test -- --watchAll=false
 
+      - name: Install root-level dependencies
+        run: npm install
+    
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+    
+      - name: Run E2E tests
+        run: npm run test:e2e
+
       - name: Create frames directory for backend tests
         working-directory: backend
         run: mkdir -p frames && echo "test" > frames/test.txt

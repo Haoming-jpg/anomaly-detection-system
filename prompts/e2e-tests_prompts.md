@@ -313,4 +313,15 @@ Please generate a Playwright test (`.spec.ts`) that implements the following Ghe
 **Response:**
 Create video_upload.spec.ts
 
-## 8. GPT - Generate a small dummy video under 1MB
+## 8. ROO - Update GitHub CI to Run Playwright E2E Tests
+
+**Prompt:**
+Please update the GitHub Actions CI @/.github/workflows/ci.yml workflow to automatically run Playwright end-to-end (E2E) tests using the test runner in `e2e-tests/`.
+
+**Project Structure:**
+- E2E tests live in `e2e-tests/`
+- The Playwright config is in `playwright.config.ts`
+- The test script is defined in `package.json` as `"test:e2e": "npx playwright test"`
+
+**Response:**
+Update ci.yml
