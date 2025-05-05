@@ -37,7 +37,14 @@ jobs:
 
       - name: Install root-level dependencies
         run: npm install
-    
+
+      - name: Start frontend server
+        working-directory: frontend
+        run: npm start &
+      
+      - name: Wait for frontend to be ready
+        run: npx wait-on http://localhost:3000
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
     
