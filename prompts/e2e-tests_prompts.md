@@ -171,3 +171,44 @@ Code Location:
 MainPage.tsx → Go to Page input
 Why Important:
 More nuanced pagination behavior that could easily break with bad input
+
+## 3. GPT - Group Features
+
+**Prompt:**
+"""Paste the last response here"""
+Group the features into logical categories.
+
+**Response:**
+Batch 1: Core Upload and Detection Flow
+These are tightly coupled and form the foundation of the app.
+
+Video Upload and Preview
+
+Video Processing Feedback Flow
+
+Supporting Frame Image Load Check
+
+Batch 2: Alert Interaction and Modal
+These are the user’s primary investigation tools after upload.
+
+Alert Table Display and Pagination
+
+Search/Filter Alerts by Type/Message
+
+View Alert Details Modal
+
+Canceling or Closing Dialog
+
+Batch 3: Page Navigation and Validation
+More edge-case-focused, but important for UX robustness.
+
+Direct Page Number Navigation
+
+Error Handling and Validation
+
+Batch 4: Critical Actions and Safety
+Destructive actions with risk → deserves isolated, careful testing
+
+Clear All Alerts and Frames
+
+Invalid Video Format Upload
