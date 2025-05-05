@@ -294,3 +294,23 @@ Your output should be the `.feature` file only, no extra explanation or code.
 
 **Response:**
 Generates alert_modal_image.feature
+
+## 7. Roo - Generate Playwright Test for Video Upload and Preview
+
+**Prompt:**
+Please generate a Playwright test (`.spec.ts`) that implements the following Gherkin scenario:
+
+@/features/video_upload.feature 
+**Test Requirements:**
+- The app runs at `http://localhost:3000`
+- The file input has the attribute `data-testid="video-upload"`
+- You may use `test`, `expect`, `page`, and `setInputFiles` from Playwright
+- After uploading, the app displays the text `"Video Preview"` on the page
+- You may assume there is a test `.mp4` file at path `tests/assets/test.mp4`
+- Use async/await and best practices for locating elements and asserting visibility
+- Output the Playwright test as a complete `.spec.ts` file.
+
+**Response:**
+Create video_upload.spec.ts
+
+## 8. GPT - Generate a small dummy video under 1MB
