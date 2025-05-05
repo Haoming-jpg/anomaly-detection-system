@@ -212,3 +212,85 @@ Destructive actions with risk → deserves isolated, careful testing
 Clear All Alerts and Frames
 
 Invalid Video Format Upload
+
+## 4. ROO - Generate Gherkin Feature for Video Upload and Preview
+
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: A user uploads a video file and sees a video preview rendered on the page after upload.
+
+**System Behavior**:
+- The user lands on the main page of the React app
+- There is a file input field with `data-testid="video-upload"`
+- The user selects a valid `.mp4` video file
+- After upload, the app displays a `<video>` element with a preview of the uploaded file
+- The system may also asynchronously begin processing the video for anomaly detection (but that will be handled in another test)
+
+**File Details**:
+- React component: @/frontend/src/MainPage.test.tsx 
+- Test will be implemented using Playwright
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include all relevant steps: page load, file upload, preview check
+- Be precise and testable (avoid vague outcomes like “it works”)
+- Include only this user flow (other behaviors like alert creation will be tested separately)
+
+Your output should be the `.feature` file only, no explanation or code.
+
+**Response:**
+Generates video_upload.feature
+
+## 5. ROO - Generate Gherkin Feature for Video Processing Feedback
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: After uploading a video, the user receives confirmation that video processing is complete.
+
+**System Behavior**:
+- The user is on the main page
+- The user uploads a valid `.mp4` video file using the file input (`data-testid="video-upload"`)
+- The system begins processing the video in the background (frame extraction, detection, alert creation)
+- When processing is complete, the app shows a browser alert with the message: `"Video processing complete."`
+
+**File Details**:
+- Processing logic is implemented in `MainPage.tsx` via the `processVideo` function
+- Confirmation is provided using the browser's `alert()` API
+- This test should focus solely on verifying the **feedback** that processing has finished — not the detection or alert creation themselves
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include realistic, testable steps (e.g., simulate upload, expect alert)
+- Do not include alert row creation or preview rendering — they are covered in separate tests
+
+Your output should be the `.feature` file only, no explanation or test code.
+
+**Response:**
+Generates video_processing_confirmation.feature
+
+## 6. ROO - Generate Gherkin Feature for Supporting Frame Image Load in Modal
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: After video processing is complete and alerts are generated, the user can click on an alert to view its details — including a supporting frame image — in a modal.
+
+**System Behavior**:
+- The user is on the main page
+- A video has already been uploaded and processed, and alert rows are shown in the table
+- The user clicks on a specific alert row in the table
+- A modal opens showing detailed information for the selected alert
+- The modal includes a frame image (e.g., `<img src="..." />`) showing the visual evidence for that alert
+
+**Code Location**:
+- MainPage.tsx → alert row triggers modal open
+- AlertDetailDialog.tsx → renders the alert content, including image
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Steps should include: page with alert table, clicking an alert row, opening modal, and confirming the image is displayed
+- Focus specifically on verifying that the frame image is shown in the modal — not the rest of the alert data
+
+Your output should be the `.feature` file only, no extra explanation or code.
+
+**Response:**
+Generates alert_modal_image.feature
