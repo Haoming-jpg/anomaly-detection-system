@@ -1,4 +1,5 @@
 # Root level ignores
+/node_modules
 .DS_Store
 .env
 .env.local
@@ -25,3 +26,17 @@ yarn-error.log*
 
 # Ignore all system-specific files
 Thumbs.db
+
+# E2E test artifacts
+test-results/
+playwright-report/
+*.log
+*.tmp
+
+# E2E test directories (if generated)
+e2e-tests/.cache
+features/.cache
+
+# Optional: ignore local test videos
+**/videos/
+**/screenshots/
