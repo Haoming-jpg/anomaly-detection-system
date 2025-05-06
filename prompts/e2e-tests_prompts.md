@@ -857,3 +857,50 @@ Your output should be the `.feature` file only — no code or extra commentary.
 
 **Response:**
 Generates clear_all_alerts.feature
+
+## 25. ROO - Generate Playwright E2E test for Clear All Alerts and Frames
+
+**Prompt:**
+Please write a Playwright E2E test for the following Gherkin feature:
+
+**Feature**: @/features/clear_all.feature
+
+---
+
+**Test Setup:**
+- This should be placed in a new file: `clear_all.spec.ts` under `e2e-tests/`
+- Use `test.describe.serial(...)` so tests run in order and share browser state
+- Use the upload mechanism to populate alerts by uploading `tests/assets/test.mp4`
+- Confirm video processing is complete by waiting for: `data-testid="status-message"`
+
+---
+
+**Scenario 1**: Successful clear
+- Wait for table to populate with alerts
+- Click the button with `data-testid="clear-all-button"`
+- Simulate confirmation (`window.confirm = () => true`)
+- Intercept and mock the POST request to `/clear_all` and respond with `{ status: 200 }`
+- Expect:
+  - Table becomes empty
+  - `data-testid="clear-status"` contains `"All alerts and frames cleared!"`
+
+**Scenario 2**: Failed clear
+- Upload again to repopulate alerts
+- Click `clear-all-button`
+- Simulate confirmation (`window.confirm = () => true`)
+- Mock the POST `/clear_all` to fail with a 500
+- Expect:
+  - `data-testid="clear-status"` contains `"Failed to clear alerts and frames."`
+  - Table rows are still visible
+
+---
+
+Notes:
+- Use `page.route(...)` to mock the backend response
+- You may hardcode mock responses for `/clear_all`
+- Do not rely on native `alert()` — all status messages are rendered in DOM under `clear-status`
+
+Please return the full Playwright test file only — no explanation or commentary.
+
+**Response:**
+Generates clear_all.spec.ts

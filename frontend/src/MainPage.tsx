@@ -292,6 +292,7 @@ const MainPage = () => {
       {/* Upload Video Section */}
       <Paper style={{ padding: 20 }}>
         <Button
+          data-testid="clear-all-button"
           variant="outlined"
           color="secondary"
           onClick={async () => {
