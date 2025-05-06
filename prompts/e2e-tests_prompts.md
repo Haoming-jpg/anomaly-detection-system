@@ -182,36 +182,36 @@ Group the features into logical categories.
 Batch 1: Core Upload and Detection Flow
 These are tightly coupled and form the foundation of the app.
 
-Video Upload and Preview
+1. Video Upload and Preview
 
-Video Processing Feedback Flow
+2. Video Processing Feedback Flow
 
-Supporting Frame Image Load Check
+3. Supporting Frame Image Load Check
 
 Batch 2: Alert Interaction and Modal
 These are the user’s primary investigation tools after upload.
 
-Alert Table Display and Pagination
+1. Alert Table Display and Pagination
 
-Search/Filter Alerts by Type/Message
+2. Search/Filter Alerts by Type/Message
 
-View Alert Details Modal
+3. View Alert Details Modal
 
-Canceling or Closing Dialog
+4. Canceling or Closing Dialog
 
 Batch 3: Page Navigation and Validation
 More edge-case-focused, but important for UX robustness.
 
-Direct Page Number Navigation
+1. Direct Page Number Navigation
 
-Error Handling and Validation
+2. Error Handling and Validation
 
 Batch 4: Critical Actions and Safety
 Destructive actions with risk → deserves isolated, careful testing
 
-Clear All Alerts and Frames
+1. Clear All Alerts and Frames
 
-Invalid Video Format Upload
+2. Invalid Video Format Upload
 
 ## 4. ROO - Generate Gherkin Feature for Video Upload and Preview
 
@@ -473,3 +473,33 @@ Please generate a Playwright test (`.spec.ts`) that implements the following Ghe
 
 **Response:**
 Create test case: displays alert detail modal with frame image
+
+## 13. ROO - Generate Gherkin Feature for Alert Table Display and Pagination
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: After uploading a video and processing is complete, the user should be able to view a table of alerts with pagination.
+
+**System Behavior**:
+- The user is on the main page
+- The system displays alerts in a table with columns for ID, timestamp, type, and message
+- Only a fixed number of rows (e.g., 50) are visible per page
+- Pagination controls are available: "Previous", "Next", and a text input to jump to a specific page
+
+**Code References**:
+- The alert table and pagination controls are implemented in `MainPage.tsx`
+- Alerts are fetched from the backend via a call to `/alerts`
+- Pagination logic is controlled by `currentPage`, `alertsPerPage`, and `pageInput` state
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include two testable behaviors:
+   1. Table displays alerts after processing
+   2. Pagination controls navigate between pages correctly
+- The test does not need to validate alert content — just row presence and page navigation
+
+Your output should be the `.feature` file only. No extra explanation or code.
+
+**Response:**
+Generates alert_table_pagination.feature
