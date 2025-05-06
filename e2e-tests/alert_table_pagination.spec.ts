@@ -4,69 +4,53 @@ import path from 'path';
 test.describe.serial('Alert Table Pagination', () => {
   const videoPath = path.resolve(__dirname, '../tests/assets/test.mp4');
 
-  test('displays alerts and navigates pages', async ({ page }) => {
-    // Setup console + error logging for debugging
-    page.on('console', msg => console.log(`[PAGE LOG] ${msg.type()}: ${msg.text()}`));
-    page.on('pageerror', error => console.error('[PAGE ERROR]', error));
-
-    // Upload video and wait for processing
+  test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:3000');
     await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
     await page.waitForSelector('[data-testid="status-message"]');
     await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
+  });
 
-    // Validate table headers
+  test('displays alerts and navigates pages', async ({ page }) => {
     const headers = page.locator('thead th');
     await expect(headers).toHaveCount(4);
     await expect(headers.nth(0)).toHaveText('ID');
-    await expect(headers.nth(1)).toHaveText('Time'); // 🛠 Fixed from 'Timestamp' to 'Time'
+    await expect(headers.nth(1)).toHaveText('Time');
     await expect(headers.nth(2)).toHaveText('Type');
     await expect(headers.nth(3)).toHaveText('Message');
 
-    // Verify at least one row exists
     const rowCount = await page.locator('tbody tr').count();
     expect(rowCount).toBeGreaterThan(0);
 
-    // Capture first row ID on page 1
     const firstRowIdBefore = await page.locator('tbody tr:first-child td:first-child').textContent();
 
-    // Click "Next" button
-    const nextPageButton = page.getByRole('button', { name: 'Next' });
-    await nextPageButton.click();
-
-    // Wait for table to update
+    await page.getByRole('button', { name: 'Next' }).click();
     await page.waitForTimeout(1000);
 
-    // Expect different first row after pagination
     const firstRowIdAfter = await page.locator('tbody tr:first-child td:first-child').textContent();
     expect(firstRowIdAfter).not.toEqual(firstRowIdBefore);
 
-    // Optional: check that current page number incremented
     const pageLabel = page.getByText(/^Page \d+ of \d+$/);
     await expect(pageLabel).toBeVisible();
   });
+
   test('filters alerts by type and message', async ({ page }) => {
-    await page.goto('http://localhost:3000');
-    await page.waitForSelector('tbody tr');
-  
     const searchInput = page.getByRole('textbox', { name: 'Search...' });
-  
-    // Filter by type: "traffic light"
+
     await searchInput.fill('traffic light');
     await page.getByRole('button', { name: 'Search by Type' }).click();
-  
+
     const typeCells = page.locator('tbody tr td:nth-child(3)');
     const typeCount = await typeCells.count();
-    expect(typeCount).toBeGreaterThan(0);    
+    expect(typeCount).toBeGreaterThan(0);
     const typeTexts = await typeCells.allTextContents();
     for (const text of typeTexts) {
       expect(text.toLowerCase()).toContain('traffic light');
     }
-  
-    // Filter by message: "98.9%"
+
     await searchInput.fill('98.9%');
     await page.getByRole('button', { name: 'Search by Message' }).click();
-  
+
     const messageCells = page.locator('tbody tr td:nth-child(4)');
     const messageCount = await messageCells.count();
     expect(messageCount).toBeGreaterThan(0);
@@ -74,51 +58,41 @@ test.describe.serial('Alert Table Pagination', () => {
     for (const text of messageTexts) {
       expect(text).toContain('98.9%');
     }
-  
-    // Reset
+
     await page.getByRole('button', { name: 'Reset' }).click();
     const totalRows = await page.locator('tbody tr').count();
-    await expect(totalRows).toBeGreaterThan(0);
+    expect(totalRows).toBeGreaterThan(0);
   });
+
   test('displays alert details in modal', async ({ page }) => {
-    await page.goto('http://localhost:3000');
-    await page.waitForSelector('tbody tr');
-  
-    // Open modal by clicking first row
-    await page.locator('tbody tr:first-child').click();
-  
+    const firstRow = page.locator('tbody tr:first-child');
+    await firstRow.click();
+
     const modal = page.locator('[role="dialog"]');
     await expect(modal).toBeVisible();
-  
+
     const modalText = modal.locator('p, td, div');
-  
+
     expect(await modalText.filter({ hasText: 'ID' }).count()).toBeGreaterThan(0);
     expect(await modalText.filter({ hasText: 'Type' }).count()).toBeGreaterThan(0);
     expect(await modalText.filter({ hasText: 'Message' }).count()).toBeGreaterThan(0);
     expect(await modalText.filter({ hasText: 'Time' }).count()).toBeGreaterThan(0);
-  
+
     const image = modal.locator('img');
     await expect(image).toBeVisible();
     const src = await image.getAttribute('src');
     expect(src).toBeTruthy();
   });
+
   test('closes alert detail modal', async ({ page }) => {
-    await page.goto('http://localhost:3000');
-    await page.waitForSelector('tbody tr');
-  
-    // Open modal by clicking first row
     await page.locator('tbody tr:first-child').click();
-    await page.waitForSelector('[role="dialog"]');
-  
+
     const modal = page.locator('[role="dialog"]');
     await expect(modal).toBeVisible();
-  
-    // Click the close button using a role-based selector
+
     const closeButton = modal.getByRole('button', { name: /close/i });
     await closeButton.click();
-  
-    // Verify the modal is no longer visible
+
     await expect(modal).not.toBeVisible();
   });
-  
 });
