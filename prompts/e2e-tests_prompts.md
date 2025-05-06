@@ -828,25 +828,32 @@ test('shows inline error for invalid page number', async ({ page }) => {
 **Prompt:**
 Please generate a `.feature` file using Gherkin syntax for the following user story:
 
-**User Goal**: The user wants to delete all alerts and their associated frames in one action, with confirmation to prevent accidental data loss.
+**User Goal**: The user wants to bulk-delete all alerts and their associated frame data using a "Clear All Alerts and Frames" button.
 
 **System Behavior**:
-- The user is on the main page of the app.
-- The user clicks the "Clear All Alerts and Frames" button.
-- The system prompts the user with a confirmation dialog.
-- If the user confirms, the system sends a POST request to `/clear_all` on the backend.
-- If successful, all alerts and frames are deleted, and a confirmation alert appears: `"All alerts and frames cleared!"`
-- The alert table updates to show no data.
-- If the request fails, an error alert appears: `"Failed to clear alerts and frames."`
+- The user is on the main page
+- The app displays a list of alerts (seeded or uploaded beforehand)
+- When the user clicks the "Clear All Alerts and Frames" button:
+  - A confirmation prompt appears (either native confirm or modal)
+  - If the user confirms, an API call is made to the `/clear_all` backend route
+  - On success, the alert table is cleared
+  - A message is shown indicating success (e.g., "All alerts and frames cleared!")
+
+- On API failure, a message is shown (e.g., "Failed to clear alerts and frames.")
 
 **Code References**:
-- Frontend logic is in `MainPage.tsx` under the Clear All section.
-- Backend integration is handled in `createAlert.ts` via a call to `/clear_all`.
+- Button is rendered in `MainPage.tsx`
+- Backend integration hits `POST /clear_all` via `axios`
+- Alert data is re-fetched after clearing
 
 **Gherkin Requirements**:
 - Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
 - Include two scenarios:
-  1. Successful clear with user confirmation
-  2. Canceling the confirmation prompt does not clear anything
+  1. Successfully clearing all alerts and displaying a success message
+  2. Handling a failed clear operation and showing an error message
+- Include `data-testid` selectors in testability expectations if relevant
 
-Your output should be the `.feature` file only, no explanation or test code.
+Your output should be the `.feature` file only — no code or extra commentary.
+
+**Response:**
+Generates clear_all_alerts.feature
