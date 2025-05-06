@@ -47,30 +47,32 @@ test.describe.serial('Clear All Alerts and Frames', () => {
     await expect(page.getByTestId('clear-status')).toHaveText('All alerts and frames cleared!');
     await expect(page.locator('tbody tr')).toHaveCount(0);
   });
+
+  test('handles failed clear and shows error message', async ({ page }) => {
+    const videoPath = path.resolve(__dirname, '../tests/assets/test.mp4');
   
+    //Confirm override BEFORE page load
+    await page.addInitScript(() => {
+      window.confirm = () => true;
+    });
   
-
-  // test('handles failed clear and shows error message', async ({ page }) => {
-  //   // Repopulate alerts by re-uploading
-  //   await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
-  //   await page.waitForSelector('[data-testid="status-message"]');
-
-  //   // Mock failed clear response
-  //   await page.route('**/clear_all', (route) => {
-  //     route.fulfill({ status: 500 });
-  //   });
-
-  //   // Confirm the action
-  //   page.addInitScript(() => {
-  //     window.confirm = () => true;
-  //   });
-
-  //   // Attempt clear
-  //   await page.getByTestId('clear-all-button').click();
-
-  //   // Verify failure
-  //   await expect(page.getByTestId('clear-status')).toHaveText('Failed to clear alerts and frames.');
-  //   const rowCount = await page.locator('tbody tr').count();
-  //   expect(rowCount).toBeGreaterThan(0);
-  // });
+    //Mock failed POST
+    await page.route('**/clear_all', (route) => {
+      route.fulfill({ status: 500 });
+    });
+  
+    await page.goto('http://localhost:3000');
+    await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
+    await page.waitForSelector('[data-testid="status-message"]');
+    await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
+  
+    // Attempt to clear
+    await page.getByTestId('clear-all-button').click();
+  
+    // Expect inline error message and table not cleared
+    await expect(page.getByTestId('clear-status')).toHaveText('Failed to clear alerts and frames.');
+    const rowCount = await page.locator('tbody tr').count();
+    expect(rowCount).toBeGreaterThan(0);
+  });
+  
 });

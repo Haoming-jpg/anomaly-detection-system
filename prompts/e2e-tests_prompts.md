@@ -904,3 +904,72 @@ Please return the full Playwright test file only — no explanation or commentar
 
 **Response:**
 Generates clear_all.spec.ts
+
+## 26. GPT: Clear-All Playwright Test Fails to Detect Status Message
+
+**Prompt:**
+A Playwright E2E test for clearing all alerts fails with this error:
+Error: Timed out 5000ms waiting for expect(locator).toHaveText(expected)
+
+Locator: getByTestId('clear-status')
+Expected string: "Failed to clear alerts and frames."
+Received: <element(s) not found>
+
+
+The component uses `setClearStatus()` to render `<Typography data-testid="clear-status">`, and it works correctly in the browser when tested manually.
+
+In the test, the user mocks the failed POST request to `/clear_all` and attempts to trigger the confirmation dialog using:
+
+```ts
+page.addInitScript(() => {
+  window.confirm = () => true;
+});
+```
+
+However, the test still times out trying to find the clear-status message.
+
+**Response:**
+The root cause is that page.addInitScript(...) was called after page.goto(...), meaning the confirm override did not apply in time. The browser showed the real native confirm dialog (which can't be handled headlessly), so the clear request was never triggered — and thus clear-status never rendered.
+
+**Solution:**
+1. Move addInitScript() above page.goto() so the confirm override is injected before page load:
+```ts
+await page.addInitScript(() => {
+  window.confirm = () => true;
+});
+await page.goto('http://localhost:3000');
+```
+2. Mock the failed clear response:
+```ts
+await page.route('**/clear_all', (route) => {
+  route.fulfill({ status: 500 });
+});
+```
+3. Ensure alert data is seeded by uploading a video:
+```ts
+await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
+await page.waitForSelector('[data-testid="status-message"]');
+await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
+```
+4. Final working test:
+```ts
+test('handles failed clear and shows error message', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.confirm = () => true;
+  });
+
+  await page.route('**/clear_all', (route) => {
+    route.fulfill({ status: 500 });
+  });
+
+  await page.goto('http://localhost:3000');
+  await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
+  await page.waitForSelector('[data-testid="status-message"]');
+
+  await page.getByTestId('clear-all-button').click();
+
+  await expect(page.getByTestId('clear-status')).toHaveText('Failed to clear alerts and frames.');
+  const rowCount = await page.locator('tbody tr').count();
+  expect(rowCount).toBeGreaterThan(0);
+});
+```
