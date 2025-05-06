@@ -319,23 +319,21 @@ test('processVideo logic executes on upload with detections', async () => {
 });
 
 
-test('shows alert when clearing alerts fails', async () => {
-  window.confirm = jest.fn(() => true);
-  window.alert = jest.fn();
+test('shows inline error when clearing alerts fails', async () => {
+  window.confirm = jest.fn(() => true); // Simulate confirm "OK"
   console.error = jest.fn(); // Suppress test console output
-
-  mockedAxios.post.mockRejectedValueOnce(new Error('Server error'));
+  mockedAxios.post.mockRejectedValueOnce(new Error('Server error')); // Simulate failure
 
   render(<MainPage />);
 
   const clearButton = screen.getByText(/Clear All Alerts and Frames/i);
   fireEvent.click(clearButton);
 
-  await waitFor(() => {
-    expect(mockedAxios.post).toHaveBeenCalledWith('http://3.145.95.9:5000/clear_all');
-    expect(window.alert).toHaveBeenCalledWith('Failed to clear alerts and frames.');
-  });
+  // Wait for the inline error message
+  const errorMessage = await screen.findByTestId('clear-status');
+  expect(errorMessage).toHaveTextContent('Failed to clear alerts and frames.');
 });
+
 
 test('search by type with empty query resets filtered alerts', async () => {
   const mockAlerts = [

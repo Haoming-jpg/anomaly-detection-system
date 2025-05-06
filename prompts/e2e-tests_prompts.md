@@ -156,15 +156,7 @@ AlertDetailDialog.tsx → onClose handler + close button
 Why Important: 
 Common UX action. Broken closing behavior creates trapped UI state.
 
-10. Invalid Video Format Upload
-User Goal: 
-Prevent non-video uploads
-Code Location: 
-accept="video/*" on input — enforced in HTML
-Why Important:
-This is user protection; worth testing that uploading a .txt or .jpg doesn’t trigger processing or preview
-
-11. Direct Page Number Navigation
+10. Direct Page Number Navigation
 User Goal:
 Type a page number and go directly to it
 Code Location:
@@ -206,12 +198,10 @@ More edge-case-focused, but important for UX robustness.
 
 2. Error Handling and Validation
 
-Batch 4: Critical Actions and Safety
-Destructive actions with risk → deserves isolated, careful testing
+Batch 4: Clear All Alerts and Frames
 
 1. Clear All Alerts and Frames
 
-2. Invalid Video Format Upload
 
 ## 4. ROO - Generate Gherkin Feature for Video Upload and Preview
 
@@ -832,3 +822,31 @@ test('shows inline error for invalid page number', async ({ page }) => {
 });
 
 ```
+
+## 24. ROO - Generate Gherkin Feature for Clear All Alerts and Frames
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: The user wants to delete all alerts and their associated frames in one action, with confirmation to prevent accidental data loss.
+
+**System Behavior**:
+- The user is on the main page of the app.
+- The user clicks the "Clear All Alerts and Frames" button.
+- The system prompts the user with a confirmation dialog.
+- If the user confirms, the system sends a POST request to `/clear_all` on the backend.
+- If successful, all alerts and frames are deleted, and a confirmation alert appears: `"All alerts and frames cleared!"`
+- The alert table updates to show no data.
+- If the request fails, an error alert appears: `"Failed to clear alerts and frames."`
+
+**Code References**:
+- Frontend logic is in `MainPage.tsx` under the Clear All section.
+- Backend integration is handled in `createAlert.ts` via a call to `/clear_all`.
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include two scenarios:
+  1. Successful clear with user confirmation
+  2. Canceling the confirmation prompt does not clear anything
+
+Your output should be the `.feature` file only, no explanation or test code.

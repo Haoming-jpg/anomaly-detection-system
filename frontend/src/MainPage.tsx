@@ -38,7 +38,8 @@ const MainPage = () => {
   }>>([]);
   const [uploadStatusMessage, setUploadStatusMessage] = useState('');
   const [pageErrorMessage, setPageErrorMessage] = useState('');
-
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [clearStatus, setClearStatus] = useState('');
 
   const fetchAlerts = async () => {
     try {
@@ -298,11 +299,11 @@ const MainPage = () => {
             if (window.confirm('Are you sure you want to delete all alerts and frames? This action cannot be undone.')) {
               try {
                 await axios.post('http://3.145.95.9:5000/clear_all');
-                alert('All alerts and frames cleared!');
+                setClearStatus('All alerts and frames cleared!');
                 fetchAlerts(); // Refresh table
               } catch (error) {
                 console.error('Error clearing all:', error);
-                alert('Failed to clear alerts and frames.');
+                setClearStatus('Failed to clear alerts and frames.');
               }
             }
           }}
@@ -311,6 +312,11 @@ const MainPage = () => {
           Clear All Alerts and Frames
         </Button>
 
+        {clearStatus && (
+          <Typography data-testid="clear-status" color={clearStatus.includes('Failed') ? 'error' : 'success.main'} style={{ marginTop: 10 }}>
+            {clearStatus}
+          </Typography>
+        )}
         <Typography variant="h5" gutterBottom>Upload Video</Typography>
         <input
           type="file"
