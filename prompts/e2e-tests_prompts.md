@@ -564,3 +564,32 @@ Your output should be the `.feature` file only. No extra explanation or test cod
 
 **Response:**
 Generates alert_detail_modal.feature
+
+## 16. ROO - Generate Gherkin Feature for Closing the Alert Detail Modal
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: After viewing alert details in a modal, the user should be able to close it cleanly and return to the main interface.
+
+**System Behavior**:
+- The modal is opened by clicking on an alert row in the table
+- The modal includes a close button (e.g., an "X" or "Close" button)
+- Clicking the close button dismisses the modal
+- After closing, the modal content should no longer be visible
+
+**Code Reference**:
+- The modal is implemented in `AlertDetailDialog.tsx`
+- It uses a `dialogOpen` state in `MainPage.tsx` and an `onClose()` handler to control visibility
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include a scenario that:
+   1. Opens the modal by clicking an alert row
+   2. Clicks the modal’s close button
+   3. Asserts that the modal is no longer visible
+
+Your output should be the `.feature` file only. No extra explanation or test code.
+
+**Response:**
+Generates alert_modal_closure.feature
