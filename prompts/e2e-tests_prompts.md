@@ -325,3 +325,78 @@ Please update the GitHub Actions CI @/.github/workflows/ci.yml workflow to autom
 
 **Response:**
 Update ci.yml
+
+## 9. GPT - Error in CI
+
+**Prompt:**
+Here is the error in github action:
+Run npm run test:e2e
+
+> test:e2e
+> npx playwright test
+
+
+Running 1 test using 1 worker
+F
+
+  1) e2e-tests/video_upload.spec.ts:4:5 › uploads video and displays preview ───────────────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      3 |
+      4 | test('uploads video and displays preview', async ({ page }) => {
+    > 5 |   await page.goto('http://localhost:3000');
+        |              ^
+      6 |
+      7 |   const fileInput = page.locator('[data-testid="video-upload"]');
+      8 |   const videoPath = path.resolve(__dirname, '../tests/asserts/test.mp4');
+        at /home/runner/work/anomaly-detection-system/anomaly-detection-system/e2e-tests/video_upload.spec.ts:5:14
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/video_upload-uploads-video-and-displays-preview/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/video_upload-uploads-video-and-displays-preview/error-context.md
+
+  1 failed
+    e2e-tests/video_upload.spec.ts:4:5 › uploads video and displays preview ────────────────────────
+
+**Response:**
+The error indicates that the Playwright test is trying to access `http://localhost:3000`, but the connection is refused. This typically means that the server is not running or not accessible at that address when the test is executed.
+Add this before the Playwright step:
+  
+  ```yaml
+        - name: Start frontend server
+        working-directory: frontend
+        run: npm start &
+      
+      - name: Wait for frontend to be ready
+        run: npx wait-on http://localhost:3000
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+  ```
+
+## 10. ROO - Generate Playwright Test for Video Processing Completion
+
+**Prompt:**
+Please generate a Playwright test (`.spec.ts`) that implements the following Gherkin scenario:
+
+Feature:
+@/features/video_processing_confirmation.feature 
+**Test Requirements:**
+- Use Playwright with TypeScript
+- The app runs at `http://localhost:3000`
+- The file input has the attribute `data-testid="video-upload"`
+- Use `page.on('dialog', ...)` to capture the browser alert
+- Upload a file named `test.mp4` located at `tests/assets/test.mp4`
+- Assert that the alert message matches `"Video processing complete."`
+- Use `path.resolve(__dirname, '../tests/assets/test.mp4')` to locate the file
+
+Output only the full `.spec.ts` file, put in @/e2e-tests
+
+**Response:**
+Create video_processing_confirmation.spec.ts
