@@ -622,3 +622,27 @@ Output the full test file to @/e2e-tests/ , including imports and setup.
 
 **Response:**
 Create alert_table_pagination.spec.ts, and test case： displays alerts and navigates pages
+
+## 18. ROO - Extend alert_table_pagination.spec.ts with filtering tests
+
+Please add a new Playwright test inside the existing `test.describe.serial('Alert Table Pagination')` block in @/e2e-tests/alert_table_pagination.spec.ts .
+
+This test should implement the following Gherkin feature:
+
+Feature: @/features/alert_filtering.feature 
+
+Setup context:
+- This test should assume alerts already exist (from the earlier test in the same file)
+- The search input is a `<TextField>` (query by role: `textbox`)
+- The buttons have visible labels: "Search by Type", "Search by Message", "Reset"
+
+📌 Requirements:
+- Simulate typing into the search input
+- Click the appropriate search button
+- Validate that all visible rows contain the expected keyword in either type or message
+- Then click "Reset" and validate the full alert list is restored
+
+Output only the new test block to insert into the same file.
+
+**Response:**
+Create test case: filters alerts by type and message

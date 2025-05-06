@@ -45,4 +45,40 @@ test.describe.serial('Alert Table Pagination', () => {
     const pageLabel = page.getByText(/^Page \d+ of \d+$/);
     await expect(pageLabel).toBeVisible();
   });
+  test('filters alerts by type and message', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.waitForSelector('tbody tr');
+  
+    const searchInput = page.getByRole('textbox', { name: 'Search...' });
+  
+    // Filter by type: "traffic light"
+    await searchInput.fill('traffic light');
+    await page.getByRole('button', { name: 'Search by Type' }).click();
+  
+    const typeCells = page.locator('tbody tr td:nth-child(3)');
+    const typeCount = await typeCells.count();
+    expect(typeCount).toBeGreaterThan(0);    
+    const typeTexts = await typeCells.allTextContents();
+    for (const text of typeTexts) {
+      expect(text.toLowerCase()).toContain('traffic light');
+    }
+  
+    // Filter by message: "98.9%"
+    await searchInput.fill('98.9%');
+    await page.getByRole('button', { name: 'Search by Message' }).click();
+  
+    const messageCells = page.locator('tbody tr td:nth-child(4)');
+    const messageCount = await messageCells.count();
+    expect(messageCount).toBeGreaterThan(0);
+    const messageTexts = await messageCells.allTextContents();
+    for (const text of messageTexts) {
+      expect(text).toContain('98.9%');
+    }
+  
+    // Reset
+    await page.getByRole('button', { name: 'Reset' }).click();
+    const totalRows = await page.locator('tbody tr').count();
+    await expect(totalRows).toBeGreaterThan(0);
+  });
+  
 });
