@@ -778,3 +778,57 @@ Your output should be the full Playwright test file only — no explanations or 
 
 **Response:**
 Generates page_navigation.spec.ts
+
+## 23. GPT: Go-To-Page Input Test Times Out in Playwright
+
+**Prompt:**
+A Playwright test for direct page navigation fails with timeout:
+Error: locator.fill: Test timeout of 30000ms exceeded.
+waiting for getByTestId('page-input')
+Even though the input is visible when testing manually in the browser, the test cannot find the `[data-testid="page-input"]` field.
+
+Later, the user added this line at the top of the test:
+```ts
+await page.waitForSelector('[data-testid="page-input"]');
+```
+But the test still failed with:
+Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+
+**Response:**
+The error occurred because the test didn’t navigate to the app or trigger alert generation before trying to access the pagination input. In Playwright, each test runs independently — no page state is shared unless explicitly set up in a beforeEach.
+
+**Solution:**
+1. Ensure the page is navigated and alerts are seeded by uploading a video:
+```ts
+await page.goto('http://localhost:3000');
+await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
+await page.waitForSelector('[data-testid="status-message"]');
+await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
+```
+
+2. Wait for the input to be present after upload:
+```ts
+await page.waitForSelector('[data-testid="page-input"]');
+const input = page.getByTestId('page-input');
+```
+
+3. Final working test snippet:
+```ts
+test('shows inline error for invalid page number', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await page.locator('[data-testid="video-upload"]').setInputFiles(videoPath);
+  await page.waitForSelector('[data-testid="status-message"]');
+  await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
+
+  await page.waitForSelector('[data-testid="page-input"]');
+  const input = page.getByTestId('page-input');
+  const goButton = page.getByRole('button', { name: 'Go' });
+
+  await input.fill('0');
+  await goButton.click();
+
+  const errorText = page.getByTestId('pagination-error');
+  await expect(errorText).toHaveText('Invalid page number');
+});
+
+```

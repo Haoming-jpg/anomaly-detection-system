@@ -36,7 +36,9 @@ const MainPage = () => {
     message: string;
     frame_url: string;
   }>>([]);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [uploadStatusMessage, setUploadStatusMessage] = useState('');
+  const [pageErrorMessage, setPageErrorMessage] = useState('');
+
 
   const fetchAlerts = async () => {
     try {
@@ -141,7 +143,7 @@ const MainPage = () => {
       await Promise.all(batch);
     }
 
-    setStatusMessage('Video processing complete.');
+    setUploadStatusMessage('Video processing complete.');
   }
 
 
@@ -152,12 +154,11 @@ const MainPage = () => {
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {statusMessage && (
-        <Typography data-testid="status-message" color="success.main">
-          {statusMessage}
+      {uploadStatusMessage && (
+        <Typography data-testid="status-message" color="success.main" style={{ marginTop: 10 }}>
+          {uploadStatusMessage}
         </Typography>
       )}
-
       {/* Search Section */}
       <Paper style={{ padding: 20 }}>
         <Typography variant="h5" gutterBottom>Search Criteria</Typography>
@@ -260,6 +261,9 @@ const MainPage = () => {
               value={pageInput}
               onChange={(e) => setPageInput(e.target.value)}
               style={{ width: 100, marginRight: 10 }}
+              inputProps={{
+                'data-testid': 'page-input'
+              }}
             />
             <Button
               variant="contained"
@@ -267,13 +271,19 @@ const MainPage = () => {
                 const pageNumber = Number(pageInput);
                 if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
                   setCurrentPage(pageNumber);
+                  setPageErrorMessage('');
                 } else {
-                  alert('Invalid page number');
+                  setPageErrorMessage('Invalid page number');
                 }
               }}
             >
               Go
             </Button>
+            {pageErrorMessage && (
+              <Typography color="error" data-testid="pagination-error" style={{ marginLeft: 10 }}>
+                {pageErrorMessage}
+              </Typography>
+            )}
           </div>
         </div>
 
