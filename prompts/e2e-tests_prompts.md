@@ -472,4 +472,4 @@ Please generate a Playwright test (`.spec.ts`) that implements the following Ghe
 - Output the Playwright test as a complete `.spec.ts` file.
 
 **Response:**
-Create test case:displays alert detail modal with frame image
+Create test case: displays alert detail modal with frame image
