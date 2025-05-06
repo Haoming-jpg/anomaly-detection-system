@@ -593,3 +593,32 @@ Your output should be the `.feature` file only. No extra explanation or test cod
 
 **Response:**
 Generates alert_modal_closure.feature
+
+## 17. ROO - Generate Playwright E2E test for alert table display and pagination
+
+**Prompt:**
+Please write a new Playwright test for the following Gherkin feature:
+
+Feature: @/features/alert_table_pagination.feature 
+
+Setup requirements:
+- This should be a new test file (e.g., `alert_table_pagination.spec.ts`)
+- Assume no alerts exist initially — you should upload a `.mp4` video and wait for processing to finish before beginning assertions, the video is located at `tests/assets/test.mp4`
+- Use the file input with `data-testid="video-upload"` to upload the test video
+- Wait for the success message `"Video processing complete."` using `getByTestId("status-message")`
+- Then validate:
+   - Table headers: ID, Timestamp, Type, Message
+   - At least one row exists
+- For pagination, click the "Next" button and confirm:
+   - The table rows change
+   - The page number increments visually or logically
+
+Notes:
+- Use `test.describe.serial(...)` if needed
+- Place logs for debugging if the test is async-dependent
+- Assume the test video produces >50 alerts
+
+Output the full test file to @/e2e-tests/ , including imports and setup.
+
+**Response:**
+Create alert_table_pagination.spec.ts, and test case： displays alerts and navigates pages
