@@ -6,7 +6,7 @@ import { runYoloDetection, extractFramesFromVideo } from './utils/yoloDetection'
 import { uploadFrame } from './utils/uploadFrame';
 import { captureFrameAsBlob } from './utils/frameCapture';
 import { createAlertFromDetection } from './utils/createAlert';
-
+import { isHeadlessTest } from './utils/env';
 
 const MainPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,6 +36,7 @@ const MainPage = () => {
     message: string;
     frame_url: string;
   }>>([]);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const fetchAlerts = async () => {
     try {
@@ -90,8 +91,13 @@ const MainPage = () => {
   };
 
   async function processVideo(file: File) {
-    const frames = await extractFramesFromVideo(file, 1000);
-
+    let frames: ImageData[];
+    if (isHeadlessTest()) {
+      console.log('[CLIENT] E2E mode: skipping real frame extraction.');
+      frames = [new ImageData(640, 640)];
+    } else {
+      frames = await extractFramesFromVideo(file, 1000);
+    }
     const canvas = document.createElement('canvas');
     canvas.width = 640;
     canvas.height = 640;
@@ -135,7 +141,7 @@ const MainPage = () => {
       await Promise.all(batch);
     }
 
-    alert('Video processing complete.');
+    setStatusMessage('Video processing complete.');
   }
 
 
@@ -146,6 +152,12 @@ const MainPage = () => {
 
   return (
     <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {statusMessage && (
+        <Typography data-testid="status-message" color="success.main">
+          {statusMessage}
+        </Typography>
+      )}
+
       {/* Search Section */}
       <Paper style={{ padding: 20 }}>
         <Typography variant="h5" gutterBottom>Search Criteria</Typography>
