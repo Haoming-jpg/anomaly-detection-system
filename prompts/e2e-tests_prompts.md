@@ -636,7 +636,7 @@ Setup context:
 - The search input is a `<TextField>` (query by role: `textbox`)
 - The buttons have visible labels: "Search by Type", "Search by Message", "Reset"
 
-📌 Requirements:
+Requirements:
 - Simulate typing into the search input
 - Click the appropriate search button
 - Validate that all visible rows contain the expected keyword in either type or message
@@ -736,3 +736,45 @@ Your output should be the `.feature` file only — no implementation code or ext
 
 **Response:**
 Generates direct_page_navigation.feature
+
+## 22. ROO - Generate Playwright E2E test for direct page number navigation
+
+**Prompt:**
+Please write a new Playwright test for the following Gherkin feature:
+
+**Feature**: @/features/direct_page_navigation.feature
+
+---
+
+**Setup Requirements:**
+- Create a new test file: `page_navigation.spec.ts` inside `@/e2e-tests/`
+- Assume there are no alerts initially — upload a `.mp4` video located at `tests/assets/test.mp4`
+- Use the file input with `data-testid="video-upload"` to upload the video
+- Wait for the success message `"Video processing complete."` using `getByTestId("status-message")`
+- Ensure the video produces more than 50 alerts (at least 2 pages)
+
+---
+
+**Scenario 1**: Valid Page Navigation
+- Type `"2"` into the input labeled `"Go to page"`
+- Click the `"Go"` button
+- Verify:
+   - The table shows page 2 (you can assert by text like `"Page 2"` or change in rows)
+   - The row content changes (optional: compare first row before and after)
+
+**Scenario 2**: Invalid Page Entry
+- Enter `"0"` into the `"Go to page"` input
+- Click the `"Go"` button
+- Confirm that an alert appears with the message `"Invalid page number"` using `page.waitForEvent('dialog')`
+
+---
+
+Notes:
+- Use `test.describe.serial(...)` if needed
+- Include full test file: imports, setup, video upload, both scenarios
+- You may use console logging and `page.on('pageerror')` for debugging
+
+Your output should be the full Playwright test file only — no explanations or extra commentary.
+
+**Response:**
+Generates page_navigation.spec.ts
