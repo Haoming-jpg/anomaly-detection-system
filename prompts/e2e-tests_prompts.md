@@ -703,3 +703,36 @@ Test Requirements:
 - Assert the modal is no longer visible or has been removed from the DOM
 
 Your output should be the new `test(...)` block only. Do not modify existing tests or include explanations.
+
+## 21. ROO - Generate Gherkin Feature for Direct Page Number Navigation
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: The user wants to jump directly to a specific page in the alert table by typing a page number.
+
+**System Behavior**:
+- The user is on the main page
+- The table displays paginated alerts, 50 per page
+- A text input labeled "Go to page" is used to enter a specific page number
+- A button labeled "Go" triggers navigation
+- When the user enters a valid page number and clicks "Go":
+  - The table updates to show the corresponding alerts
+  - The page number indicator updates accordingly
+
+**Code References**:
+- All logic is implemented in `MainPage.tsx`
+- Controlled state includes `pageInput` and `currentPage`
+- Validation is included to prevent jumping to out-of-bound pages
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include at least two scenarios:
+  1. Navigating to a valid page number updates the table and page indicator
+  2. Entering an invalid page (e.g., 0 or too large) shows an alert with a helpful message
+- Use user-facing labels and testable behaviors from the UI (i.e., “Go to page”, “Go”)
+
+Your output should be the `.feature` file only — no implementation code or extra commentary.
+
+**Response:**
+Generates direct_page_navigation.feature
