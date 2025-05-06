@@ -503,3 +503,34 @@ Your output should be the `.feature` file only. No extra explanation or code.
 
 **Response:**
 Generates alert_table_pagination.feature
+
+## 14. ROO - Generate Gherkin Feature for Searching/Filtering Alerts
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: The user wants to filter alerts by type or message text to quickly find relevant results.
+
+**System Behavior**:
+- The user is on the main page with existing alerts displayed
+- There is a shared search input field (`<TextField>`) used for both type and message filtering
+- Two buttons allow the user to filter alerts:
+   1. "Search by Type"
+   2. "Search by Message"
+- Matching is case-insensitive and checks if the search term is a substring of the alert field
+- Filtered results are shown in the alert table
+- A "Reset" button clears the filter and shows all alerts again
+
+**Code Reference**:
+- Filtering logic is implemented in `MainPage.tsx` using `setFilteredAlerts(...)`
+- Table rows are updated reactively based on filtered results
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include two scenarios:
+   1. Search by type filters alerts
+   2. Search by message filters alerts
+- Each scenario should simulate entering text and clicking the appropriate button
+- Add a third scenario for clearing the filter with the "Reset" button
+
+Your output should be the `.feature` file only. No extra explanation or code.
