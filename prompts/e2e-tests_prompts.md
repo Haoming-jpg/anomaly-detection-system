@@ -646,3 +646,33 @@ Output only the new test block to insert into the same file.
 
 **Response:**
 Create test case: filters alerts by type and message
+
+## 19. ROO - Extend alert_table_pagination.spec.ts with alert detail modal test
+
+**Prompt:**
+Please add a new Playwright test inside the existing `test.describe.serial('Alert Table Pagination')` block in @/e2e-tests/alert_table_pagination.spec.ts.
+
+This test should implement the following Gherkin feature:
+
+**Feature**: `@/features/alert_detail_modal.feature`
+
+---
+
+**User Goal**: When a user clicks on a row in the alert table, a modal opens displaying full alert details and the associated frame image.
+
+**Setup context**:
+- Assume alerts already exist from earlier seeded or uploaded video
+- The table contains rows with columns: ID, Timestamp, Type, Message
+- Clicking a row opens the `AlertDetailDialog` modal (already implemented)
+- Modal includes the alert's ID, timestamp, type, message, and an `<img>` element for the frame
+- The modal is expected to appear with `role="dialog"` or visible unique labels
+
+**Test Requirements**:
+- Click the first row in the table (`tbody tr:first-child`)
+- Wait for the modal to appear
+- Validate that the modal contains:
+  - The alert’s ID, timestamp, type, and message
+  - An `<img>` tag with a valid `src` attribute
+- Use `expect(locator).toBeVisible()` and `expect(locator).toHaveText(...)` as needed
+
+Your output should be **only** the new test block to be inserted into the same file — no explanations or setup code.

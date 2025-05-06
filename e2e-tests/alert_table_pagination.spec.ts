@@ -80,5 +80,26 @@ test.describe.serial('Alert Table Pagination', () => {
     const totalRows = await page.locator('tbody tr').count();
     await expect(totalRows).toBeGreaterThan(0);
   });
+  test('displays alert details in modal', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.waitForSelector('tbody tr');
   
+    // Open modal by clicking first row
+    await page.locator('tbody tr:first-child').click();
+  
+    const modal = page.locator('[role="dialog"]');
+    await expect(modal).toBeVisible();
+  
+    const modalText = modal.locator('p, td, div');
+  
+    expect(await modalText.filter({ hasText: 'ID' }).count()).toBeGreaterThan(0);
+    expect(await modalText.filter({ hasText: 'Type' }).count()).toBeGreaterThan(0);
+    expect(await modalText.filter({ hasText: 'Message' }).count()).toBeGreaterThan(0);
+    expect(await modalText.filter({ hasText: 'Time' }).count()).toBeGreaterThan(0);
+  
+    const image = modal.locator('img');
+    await expect(image).toBeVisible();
+    const src = await image.getAttribute('src');
+    expect(src).toBeTruthy();
+  });  
 });
