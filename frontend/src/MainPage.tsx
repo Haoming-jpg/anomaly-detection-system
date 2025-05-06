@@ -38,7 +38,6 @@ const MainPage = () => {
   }>>([]);
   const [uploadStatusMessage, setUploadStatusMessage] = useState('');
   const [pageErrorMessage, setPageErrorMessage] = useState('');
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [clearStatus, setClearStatus] = useState('');
 
   const fetchAlerts = async () => {
