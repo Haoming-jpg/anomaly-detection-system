@@ -534,3 +534,33 @@ Please generate a `.feature` file using Gherkin syntax for the following user st
 - Add a third scenario for clearing the filter with the "Reset" button
 
 Your output should be the `.feature` file only. No extra explanation or code.
+
+**Response:**
+Generates alert_filtering.feature
+
+## 15. ROO - Generate Gherkin Feature for Viewing Alert Details in Modal
+
+**Prompt:**
+Please generate a `.feature` file using Gherkin syntax for the following user story:
+
+**User Goal**: After alerts are displayed, the user can click on an alert to view its detailed information in a modal dialog.
+
+**System Behavior**:
+- The user is on the main page with at least one alert visible in the table
+- When the user clicks an alert row, a modal opens
+- The modal displays detailed alert information:
+   - ID, timestamp, type, message, and the frame image (`<img>`)
+- The modal component is implemented in `AlertDetailDialog.tsx`
+
+**Gherkin Requirements**:
+- Use `Feature`, `Scenario`, `Given`, `When`, `Then` format
+- Include a scenario that:
+   1. Starts with alerts already visible
+   2. Clicks on one of them
+   3. Asserts the modal opens and shows alert data
+- Ensure the scenario is generic enough to apply to any alert row
+
+Your output should be the `.feature` file only. No extra explanation or test code.
+
+**Response:**
+Generates alert_detail_modal.feature
