@@ -35,5 +35,24 @@ test.describe.serial('Video Upload and Processing Flow', () => {
     await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
   });
   
+  test('displays alert detail modal with frame image', async ({ page }) => {
+    // Go to the main page
+    await page.goto('http://localhost:3000');
+  
+    // Wait for alert table rows to load
+    const firstRow = page.locator('table tbody tr').first();
+    await expect(firstRow).toBeVisible();
+  
+    // Click the first alert row to open the modal
+    await firstRow.click();
+  
+    // Wait for the modal to appear
+    const modalImage = page.locator('img');
+    await expect(modalImage).toBeVisible();
+  
+    // Assert that the image src is not empty (indicating frame loaded)
+    const src = await modalImage.getAttribute('src');
+    expect(src).toBeTruthy(); // not null or empty
+  });
   
 });

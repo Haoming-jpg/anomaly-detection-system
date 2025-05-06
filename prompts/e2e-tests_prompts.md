@@ -455,3 +455,21 @@ setStatusMessage('Video processing complete.');
 await fileInput.setInputFiles(videoPath);
 await expect(page.getByTestId('status-message')).toHaveText('Video processing complete.');
 ```
+
+## 12. Roo - Test for Alert Modal and Frame Image
+
+**Prompt:**
+Please generate a Playwright test (`.spec.ts`) that implements the following Gherkin scenario:
+
+@/features/video_upload.feature 
+**Test Requirements:**
+- The app runs at `http://localhost:3000`
+- The file input has the attribute `data-testid="video-upload"`
+- You may use `test`, `expect`, `page`, and `setInputFiles` from Playwright
+- After uploading, the app displays the text `"Video Preview"` on the page
+- You may assume there is a test `.mp4` file at path `tests/assets/test.mp4`
+- Use async/await and best practices for locating elements and asserting visibility
+- Output the Playwright test as a complete `.spec.ts` file.
+
+**Response:**
+Create test case:displays alert detail modal with frame image
