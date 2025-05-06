@@ -676,3 +676,30 @@ This test should implement the following Gherkin feature:
 - Use `expect(locator).toBeVisible()` and `expect(locator).toHaveText(...)` as needed
 
 Your output should be **only** the new test block to be inserted into the same file — no explanations or setup code.
+
+**Response:**
+Create test case: opens alert detail modal and displays frame image
+
+## 20. ROO - Extend alert_table_pagination.spec.ts with modal closure test
+
+Please add a new Playwright test to the existing `test.describe.serial('Alert Table Pagination')` block in `@/e2e-tests/alert_table_pagination.spec.ts`.
+
+This test should implement the following Gherkin scenario:
+
+**Feature**: `@/features/alert_modal_closure.feature`
+
+
+Setup context:
+- Assume alerts already exist from earlier tests in the same file.
+- The modal is triggered by clicking on any `<tr>` inside `<tbody>` (you may use `tbody tr:first-child`)
+- The modal has `role="dialog"` and is dismissed via a button labeled "Close"
+- After clicking "Close", the modal should be removed or hidden
+
+Test Requirements:
+- Navigate to the main page
+- Open the modal by clicking a table row
+- Wait for the modal (`[role="dialog"]`) to be visible
+- Click the "Close" button within the modal
+- Assert the modal is no longer visible or has been removed from the DOM
+
+Your output should be the new `test(...)` block only. Do not modify existing tests or include explanations.

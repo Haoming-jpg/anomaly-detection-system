@@ -101,5 +101,24 @@ test.describe.serial('Alert Table Pagination', () => {
     await expect(image).toBeVisible();
     const src = await image.getAttribute('src');
     expect(src).toBeTruthy();
-  });  
+  });
+  test('closes alert detail modal', async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.waitForSelector('tbody tr');
+  
+    // Open modal by clicking first row
+    await page.locator('tbody tr:first-child').click();
+    await page.waitForSelector('[role="dialog"]');
+  
+    const modal = page.locator('[role="dialog"]');
+    await expect(modal).toBeVisible();
+  
+    // Click the close button using a role-based selector
+    const closeButton = modal.getByRole('button', { name: /close/i });
+    await closeButton.click();
+  
+    // Verify the modal is no longer visible
+    await expect(modal).not.toBeVisible();
+  });
+  
 });
